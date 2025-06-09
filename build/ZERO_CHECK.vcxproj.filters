@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\risso\Downloads\cganimator_final\build\CMakeFiles\fb70a2b849dbdea343891eb71f9f5aca\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{41199449-9ED2-344B-8AAD-7DECAC0202B9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

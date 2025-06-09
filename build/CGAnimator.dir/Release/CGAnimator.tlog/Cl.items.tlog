@@ -1,0 +1,9 @@
+C:\Users\risso\Downloads\cganimator_final\src\main.cpp;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\main.obj
+C:\Users\risso\Downloads\cganimator_final\src\window.cpp;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\window.obj
+C:\Users\risso\Downloads\cganimator_final\src\shader.cpp;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\shader.obj
+C:\Users\risso\Downloads\cganimator_final\src\cube.cpp;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\cube.obj
+C:\Users\risso\Downloads\cganimator_final\src\texture.cpp;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\texture.obj
+C:\Users\risso\Downloads\cganimator_final\src\camera.cpp;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\camera.obj
+C:\Users\risso\Downloads\cganimator_final\src\renderer.cpp;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\renderer.obj
+C:\Users\risso\Downloads\cganimator_final\external\glad\glad.c;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\glad.obj
+C:\Users\risso\Downloads\cganimator_final\external\stb_image\stb_image.cpp;C:\Users\risso\Downloads\cganimator_final\build\CGAnimator.dir\Release\stb_image.obj

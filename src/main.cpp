@@ -1,0 +1,164 @@
+#include "main.h"
+
+bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode viewMode) {
+    // Criar diretório de saída se não existir
+    std::filesystem::create_directories(outputDir);
+    
+    // Inicializar janela
+    Window window(DEFAULT_WIDTH, DEFAULT_HEIGHT, "CGAnimator");
+    if (!window.initialize()) {
+        std::cerr << "Falha ao inicializar janela" << std::endl;
+        return false;
+    }
+    
+    // Inicializar renderer
+    Renderer renderer(window);
+    if (!renderer.initialize()) {
+        std::cerr << "Falha ao inicializar renderer" << std::endl;
+        return false;
+    }
+    
+    // Inicializar câmera
+    Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+    
+    // Inicializar cubo
+    Cube cube;
+    if (!cube.initialize("textures/metal_texture.jpg")) {
+        std::cerr << "Falha ao inicializar cubo" << std::endl;
+        return false;
+    }
+    
+    // Configurar posição inicial do cubo
+    cube.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    
+    // Variáveis para controle de tempo
+    float lastFrameTime = 0.0f;
+    float deltaTime = 0.0f;
+    int frameIndex = 0;
+    bool renderingComplete = false;
+    
+    // Loop principal
+    while (!window.shouldClose()) {
+        // Calcular tempo delta
+        float currentTime = static_cast<float>(glfwGetTime());
+        deltaTime = currentTime - lastFrameTime;
+        lastFrameTime = currentTime;
+        
+        // Processar entrada do usuário
+        window.processInput(deltaTime);
+        
+        // Atualizar rotação do cubo
+        float rotationSpeed = 45.0f;  // 45 graus por segundo
+        glm::vec3 rotation = cube.getRotation();
+        rotation.y += rotationSpeed * deltaTime;
+        rotation.x += rotationSpeed * deltaTime * 0.5f;
+        cube.setRotation(rotation);
+        
+        // Renderizar frame
+        renderer.renderFrame(camera, cube, deltaTime, frameIndex);
+        
+        // No modo de renderização, salvar frames e verificar conclusão
+        if (viewMode == ViewMode::RENDER_ONLY || (viewMode == ViewMode::INTERACTIVE && !renderingComplete && frameIndex < totalFrames)) {
+            // Salvar frame como imagem
+            if (!renderer.saveFrameToImage(outputDir, frameIndex)) {
+                std::cerr << "Falha ao salvar frame " << frameIndex << std::endl;
+                return false;
+            }
+            
+            // Exibir progresso
+            float progress = static_cast<float>(frameIndex + 1) / static_cast<float>(totalFrames) * 100.0f;
+            std::cout << "Progresso: " << std::fixed << std::setprecision(1) << progress << "%" << std::endl;
+            
+            // Incrementar índice do frame
+            frameIndex++;
+            
+            // Verificar se a renderização foi concluída
+            if (frameIndex >= totalFrames) {
+                renderingComplete = true;
+                
+                // Combinar frames em vídeo
+                std::string outputVideo = outputDir + "/animation.mp4";
+                if (!renderer.combineFramesToVideo(outputDir, outputVideo, totalFrames, 60)) {
+                    std::cerr << "Falha ao combinar frames em vídeo" << std::endl;
+                    return false;
+                }
+                
+                std::cout << "Animação renderizada com sucesso: " << outputVideo << std::endl;
+                
+                // No modo de renderização apenas, sair do loop
+                if (viewMode == ViewMode::RENDER_ONLY) {
+                    std::cout << "todos os frames renderizados, saindo do loop\n";
+                    break;
+                } else {
+                    std::cout << "Renderização concluída. Pressione ESC para sair ou continue interagindo com a visualização." << std::endl;
+                }
+            }
+        }
+        
+        // Atualizar janela
+        window.update();
+        
+        // No modo interativo, adicionar um pequeno atraso para não sobrecarregar a CPU
+        if (viewMode == ViewMode::INTERACTIVE && renderingComplete) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
+        }
+    }
+    
+    return true;
+}
+
+int main(int argc, char* argv[]) {
+    // Verificar argumentos de linha de comando
+    int width = DEFAULT_WIDTH;
+    int height = DEFAULT_HEIGHT;
+    int frames = TOTAL_FRAMES;
+    std::string outputDir = OUTPUT_DIR;
+    ViewMode viewMode = ViewMode::INTERACTIVE; // Modo interativo por padrão
+    
+    // Processar argumentos (se houver)
+    if (argc > 1) {
+        for (int i = 1; i < argc; i++) {
+            std::string arg = argv[i];
+            
+            if (arg == "--width" && i + 1 < argc) {
+                width = std::stoi(argv[++i]);
+            }
+            else if (arg == "--height" && i + 1 < argc) {
+                height = std::stoi(argv[++i]);
+            }
+            else if (arg == "--frames" && i + 1 < argc) {
+                frames = std::stoi(argv[++i]);
+            }
+            else if (arg == "--output" && i + 1 < argc) {
+                outputDir = argv[++i];
+            }
+            else if (arg == "--mode" && i + 1 < argc) {
+                std::string mode = argv[++i];
+                if (mode == "interactive") {
+                    viewMode = ViewMode::INTERACTIVE;
+                } else if (mode == "render") {
+                    viewMode = ViewMode::RENDER_ONLY;
+                }
+            }
+            else if (arg == "--help") {
+                std::cout << "Uso: " << argv[0] << " [opções]" << std::endl;
+                std::cout << "Opções:" << std::endl;
+                std::cout << "  --width N     Largura da janela (padrão: " << DEFAULT_WIDTH << ")" << std::endl;
+                std::cout << "  --height N    Altura da janela (padrão: " << DEFAULT_HEIGHT << ")" << std::endl;
+                std::cout << "  --frames N    Número total de frames (padrão: " << TOTAL_FRAMES << ")" << std::endl;
+                std::cout << "  --output DIR  Diretório de saída (padrão: " << OUTPUT_DIR << ")" << std::endl;
+                std::cout << "  --mode MODE   Modo de visualização (interactive/render, padrão: interactive)" << std::endl;
+                std::cout << "  --help        Exibir esta ajuda" << std::endl;
+                return 0;
+            }
+        }
+    }
+    
+    // Renderizar animação
+    if (!renderAnimation(outputDir, frames, viewMode)) {
+        std::cerr << "Falha ao renderizar animação" << std::endl;
+        return 1;
+    }
+    
+    return 0;
+}
