@@ -1,9 +1,0 @@
-E:\Projects\USP\CG-Animation\src\main.cpp;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\main.obj
-E:\Projects\USP\CG-Animation\src\window.cpp;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\window.obj
-E:\Projects\USP\CG-Animation\src\shader.cpp;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\shader.obj
-E:\Projects\USP\CG-Animation\src\cube.cpp;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\cube.obj
-E:\Projects\USP\CG-Animation\src\texture.cpp;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\texture.obj
-E:\Projects\USP\CG-Animation\src\camera.cpp;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\camera.obj
-E:\Projects\USP\CG-Animation\src\renderer.cpp;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\renderer.obj
-E:\Projects\USP\CG-Animation\external\glad\glad.c;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\glad.obj
-E:\Projects\USP\CG-Animation\external\stb_image\stb_image.cpp;E:\Projects\USP\CG-Animation\build\CGAnimator.dir\Release\stb_image.obj
