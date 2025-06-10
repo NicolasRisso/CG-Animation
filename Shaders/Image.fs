@@ -30,7 +30,7 @@ void main()
 
     vec3 col = mix(vec3 (.01,0.1,0.1),vec3(0.8,0.8,1.0),-p.y);
     vec3 Can = vec3(0.,1.0,-1.0);
-    vec3 dir = normali
+    // vec3 dir = normali
 
 
     C = vec4( col, 1.0 );
