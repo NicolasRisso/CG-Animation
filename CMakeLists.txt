@@ -26,7 +26,7 @@ FetchContent_MakeAvailable(glad)
 set(SRC_DIR       "${CMAKE_SOURCE_DIR}/src")
 set(EXTERNAL_DIR  "${CMAKE_SOURCE_DIR}/external")
 set(INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/include")
-set(SHADERS_DIR   "${CMAKE_SOURCE_DIR}/shaders")
+set(SHADERS_DIR   "${CMAKE_SOURCE_DIR}/Shaders")
 set(TEXTURES_DIR  "${CMAKE_SOURCE_DIR}/textures")
 
 # Coleta fontes e headers da sua aplicação

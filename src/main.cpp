@@ -23,7 +23,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     
     // Inicializar cubo
     Cube cube;
-    if (!cube.initialize("textures/metal_texture.jpg", "shaders/default.vs", "shaders/default.fs")) {
+    if (!cube.initialize("textures/metal_texture.jpg", "Shaders/default.vs", "Shaders/default.fs")) {
         std::cerr << "Falha ao inicializar cubo" << '\n';
         return false;
     }
