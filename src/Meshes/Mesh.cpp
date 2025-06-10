@@ -49,6 +49,7 @@ void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
     glActiveTexture(GL_TEXTURE0);
     m_texture.bind();
     m_shader->setInt("material.diffuse", 0);
+    glUniform1f(locMaterialShininess, 32.0f);
 
     // Send Lights
     for (size_t i = 0; i < lights.size(); i++)
@@ -120,6 +121,7 @@ void Mesh::cacheUniformLocations()
     locView    = glGetUniformLocation(m_shader->ID, "view");
     locProjection    = glGetUniformLocation(m_shader->ID, "projection");
     locViewPosition = glGetUniformLocation(m_shader->ID, "viewPos");
+    locMaterialShininess = glGetUniformLocation(m_shader->ID, "material.shininess");
 
     locLightPosition.resize(MAX_LIGHTS);
     locLightColor.resize(MAX_LIGHTS);

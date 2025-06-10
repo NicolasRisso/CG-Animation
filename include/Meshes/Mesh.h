@@ -10,6 +10,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <memory> // Added for std::unique_ptr
 #include "shader.h"
 #include "texture.h"
 
@@ -77,6 +78,7 @@ private:
 
     // Cached uniform locations
     GLint locModel, locView, locProjection, locViewPosition;
+    GLint locMaterialShininess;
     std::vector<GLint> locLightPosition, locLightColor, locLightConst, locLightLinear, locLightQuad;
 
     // REMOVE REMOVE:

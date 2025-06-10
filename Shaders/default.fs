@@ -78,7 +78,7 @@ void main() {
         
         // Atenuação
         float distance = length(lights[i].position - FragPos);
-        float attenuation = 1.0 / (lights[i].constant + lights[i].linear * distance + 
+        float attenuation = 1.0 / (lights[i].constant + lights[i].linear * distance +
                             lights[i].quadratic * (distance * distance));
         
         // Aplicar atenuação
@@ -91,4 +91,6 @@ void main() {
     
     // Saída final
     FragColor = vec4(result, 1.0);
+    // FragColor = vec4(1.0, 0.0, 0.0, 1.0); // Solid red color
+    // FragColor = vec4(metallicColor, 1.0);
 }

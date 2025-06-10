@@ -38,11 +38,11 @@ void Cube::setupMesh(std::vector<float>& vertices, std::vector<unsigned int>& in
      };
 
     indices = {
-        0, 1, 2, 2, 3, 0,         // back
-        4, 5, 6, 6, 7, 4,         // front
+        0, 3, 2, 2, 1, 0,         // back
+        4, 5, 6, 6, 7, 4,         // front (corrected)
         8, 9,10,10,11, 8,         // left
-       12,13,14,14,15,12,         // right
+       12,13,14,14,15,12,         // right (corrected)
        16,17,18,18,19,16,         // bottom
-       20,21,22,22,23,20          // top
+       20,22,21,22,20,23          // top (corrected)
     };
 }
