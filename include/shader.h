@@ -9,16 +9,12 @@
     #ifndef WIN32_LEAN_AND_MEAN
         #define WIN32_LEAN_AND_MEAN  // Reduz inclusões do Windows.h
     #endif
-    #include <windows.h>
 #endif
 
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 
 #include <string>
-#include <fstream>
 #include <sstream>
-#include <iostream>
 
 /**
  * @class Shader
@@ -28,7 +24,7 @@ class Shader
 {
 public:
     // ID do programa de shader
-    unsigned int m_programId;
+    unsigned int ID;
 
     /**
      * @brief Construtor que lê e constrói o shader

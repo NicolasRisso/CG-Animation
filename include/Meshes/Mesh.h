@@ -5,11 +5,9 @@
 #ifdef _WIN32
     #define NOMINMAX
     #define WIN32_LEAN_AND_MEAN
-    #include <windows.h>    
 #endif
 
 #include <vector>
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "shader.h"
@@ -22,14 +20,16 @@ public:
 
     /** @brief Inicializa a Malha com textura
      * @param texturePath Caminho para o arquivo de textura
+     * @param shaderVert Caminho para o .vs do Shader
+     * @param shaderFrag Caminho para o .fs do Shader
      * @return true se a inicialização foi bem-sucedida, false caso contrário */
-    bool initialize(const std::string& texturePath);
+    bool initialize(const std::string& texturePath, const std::string& shaderVert = "shaders/default.vs", const std::string& shaderFrag = "shaders/default.fs");
 
     /** @brief Renderiza a Malha
      * @param shader Shader a ser utilizado na renderização
      * @param viewMatrix Matriz de visualização
      * @param projectionMatrix Matriz de projeção */
-    void render(Shader& shader, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+    void render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const std::vector<class Light>& lights, const glm::vec3& cameraPosition);
 
     /** @brief Atualiza a posição da Malha
      * @param position Nova posição */
@@ -66,16 +66,21 @@ protected:
     /** @brief Configura os buffers de vértices e índices. (Gera VAO, VBO e EBO) */
     void setupBuffers(const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
 
-    unsigned int m_vao;          ///< Vertex Array Object
-    unsigned int m_vbo;          ///< Vertex Buffer Object
-    unsigned int m_ebo;          ///< Element Buffer Object
-    Texture m_texture;           ///< Textura do cubo
-    
-    glm::vec3 m_position;        ///< Posição da Malha
-    glm::vec3 m_rotation;        ///< Rotação da Malha em graus
-    glm::vec3 m_scale;           ///< Escala da Malha
+private:
+    void cacheUniformLocations();
 
-    unsigned int m_indexCount = 0;
+    // Vertex Array Object, Vertex Buffer Object, Element Buffer Object
+    unsigned int m_vao = 0, m_vbo = 0, m_ebo = 0, m_indexCount = 0;
+    glm::vec3 m_position{0.0f}, m_rotation{0.0f}, m_scale{0.0f};
+    Texture m_texture;
+    std::unique_ptr<Shader> m_shader;
+
+    // Cached uniform locations
+    GLint locModel, locView, locProjection, locViewPosition;
+    std::vector<GLint> locLightPosition, locLightColor, locLightConst, locLightLinear, locLightQuad;
+
+    // REMOVE REMOVE:
+    const int MAX_LIGHTS = 4;
 };
 
 #endif

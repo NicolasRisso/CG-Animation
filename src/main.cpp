@@ -7,16 +7,14 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     // Inicializar janela
     Window window(DEFAULT_WIDTH, DEFAULT_HEIGHT, "CGAnimator");
     if (!window.initialize()) {
-        std::cerr << "Falha ao inicializar janela" << std::endl;
+        std::cerr << "Falha ao inicializar janela" << '\n';
         return false;
     }
-
-    Shader shader("shaders/cube.vs", "shaders/cube.fs");
     
     // Inicializar renderer
     Renderer renderer(window);
     if (!renderer.initialize()) {
-        std::cerr << "Falha ao inicializar renderer" << std::endl;
+        std::cerr << "Falha ao inicializar renderer" << '\n';
         return false;
     }
     
@@ -25,8 +23,8 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     
     // Inicializar cubo
     Cube cube;
-    if (!cube.initialize("textures/metal_texture.jpg")) {
-        std::cerr << "Falha ao inicializar cubo" << std::endl;
+    if (!cube.initialize("textures/metal_texture.jpg", "shaders/default.vs", "shaders/default.fs")) {
+        std::cerr << "Falha ao inicializar cubo" << '\n';
         return false;
     }
     
@@ -59,13 +57,10 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         cube.setRotation(cube.getRotation() + rotation);
         //cube.render(shader, camera.getViewMatrix(), camera.getProjectionMatrix(window.getWidth() / window.getHeight()));
         
-        // Renderizar frame
-        renderer.renderFrame(camera, cube, deltaTime, frameIndex);
-        
-        // No modo de renderização, salvar frames e verificar conclusão
-        if (viewMode == ViewMode::RENDER_ONLY || (viewMode == ViewMode::INTERACTIVE && !renderingComplete && frameIndex < totalFrames))
+        switch (viewMode)
         {
-            if (frameIndex < totalFrames)
+        case ViewMode::RENDER_ONLY:
+            if (!renderingComplete && frameIndex < totalFrames)
             {
                 // Salvar frame como imagem
                 if (viewMode == ViewMode::RENDER_ONLY)
@@ -75,11 +70,11 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
                         std::cerr << "Falha ao salvar frame " << frameIndex << std::endl;
                         return false;
                     }
-                    frameIndex++;
                     // Exibir progresso
                     float progress = static_cast<float>(frameIndex + 1) / static_cast<float>(totalFrames) * 100.0f;
                     std::cout << "Progresso: " << std::fixed << std::setprecision(1) << progress << "%" << std::endl;
                 }
+                frameIndex++;
             }
             // Verificar se a renderização foi concluída
             else
@@ -103,15 +98,29 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
                 
                 std::cout << "Renderização concluída. Pressione ESC para sair ou continue interagindo com a visualização." << std::endl;
             }
+            break;
+        case ViewMode::INTERACTIVE:
+            frameIndex++;
+            break;
+        default:
+            std::cout << "Passe um modo de renderização válido ao executar usando \"-mode MODO\" no terminal. Modos são \"render\" e \"interactive\"." << std::endl;
+            return false;
         }
         
-        // Atualizar janela
-        window.update();
+        
+        // No modo de renderização, salvar frames e verificar conclusão
+        if (viewMode == ViewMode::RENDER_ONLY || (viewMode == ViewMode::INTERACTIVE && !renderingComplete && frameIndex < totalFrames))
+        {
+
+        }
+        
+        // Atualizar janela e Renderizar
+        renderer.renderFrame(camera, cube, deltaTime, frameIndex);
         
         // No modo interativo, adicionar um pequeno atraso para não sobrecarregar a CPU
-        if (viewMode == ViewMode::INTERACTIVE && renderingComplete) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
-        }
+        // if (viewMode == ViewMode::INTERACTIVE && renderingComplete) {
+        //     std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
+        // }
     }
     
     return true;

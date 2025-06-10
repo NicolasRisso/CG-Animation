@@ -5,13 +5,11 @@
 #ifdef _WIN32
     #define NOMINMAX  // Evita conflitos com min/max do Windows
     #define WIN32_LEAN_AND_MEAN  // Reduz inclusões do Windows.h
-    #include <windows.h>
 #endif
 
 #include <glad/glad.h>
 #include <string>
 #include <vector>
-#include "shader.h"
 #include "camera.h"
 #include "cube.h"
 #include "window.h"
@@ -26,11 +24,7 @@ public:
      * @brief Construtor
      * @param window Referência para a janela
      */
-    Renderer(Window& window);
-    
-    /**
-     * @brief Destrutor
-     */
+    explicit Renderer(Window& window);
     ~Renderer();
     
     /**
@@ -42,11 +36,11 @@ public:
     /**
      * @brief Renderiza um frame
      * @param camera Câmera utilizada para renderização
-     * @param cube Cubo a ser renderizado
+     * @param mesh Cubo a ser renderizado
      * @param deltaTime Tempo desde o último frame
      * @param currentFrame Número do frame atual
      */
-    void renderFrame(Camera& camera, Cube& cube, float deltaTime, int currentFrame);
+    void renderFrame(Camera& camera, Mesh& mesh, float deltaTime, int currentFrame);
     
     /**
      * @brief Salva o frame atual como imagem
@@ -55,13 +49,6 @@ public:
      * @return true se o salvamento foi bem-sucedido, false caso contrário
      */
     bool saveFrameToImage(const std::string& outputPath, int frameNumber);
-    
-    /**
-     * @brief Atualiza as posições das luzes
-     * @param deltaTime Tempo desde o último frame
-     * @param currentFrame Número do frame atual
-     */
-    void updateLights(float deltaTime, int currentFrame);
     
     /**
      * @brief Define a cor da luz
@@ -91,23 +78,16 @@ public:
 private:
     /** @brief Configura as luzes iniciais*/
     void setupLights();
-
-    void cacheUniformLocations();
+    void updateLights(float deltaTime);
     
-    Window& m_window;                    ///< Referência para a janela
-    Shader m_shader;                     ///< Shader para renderização
-    
-    static const int MAX_LIGHTS = 4;     ///< Número máximo de luzes
-    glm::vec3 m_lightPositions[MAX_LIGHTS]; ///< Posições das luzes
-    glm::vec3 m_lightColors[MAX_LIGHTS];    ///< Cores das luzes
+    Window& m_window;
 
-    GLint m_shininessLocation;
-    GLint m_viewPositionLocation;
-    std::vector<GLint> m_lightPositionLocations;
-    std::vector<GLint> m_lightColorLocations;
-    std::vector<GLint> m_lightConstLocations;
-    std::vector<GLint> m_lightLinearLocations;
-    std::vector<GLint> m_lightQuadraticLocations;
+    float m_accumulateTime = 0.0f;
+
+    std::vector<Light> m_lights;
+
+    // REMOVE REMOVE REMOVE REMOVE:
+    const int MAX_LIGHTS = 4;
 };
 
-#endif // RENDERER_H
+#endif

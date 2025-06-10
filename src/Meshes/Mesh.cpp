@@ -1,5 +1,9 @@
 #include "Meshes/Mesh.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
+#include "Light.h"
+
 Mesh::Mesh() = default;
 
 Mesh::~Mesh()
@@ -9,29 +13,55 @@ Mesh::~Mesh()
     if (m_vao) glDeleteVertexArrays(1, &m_vao);
 }
 
-bool Mesh::initialize(const std::string& texturePath)
+bool Mesh::initialize(const std::string& texturePath, const std::string& shaderVert, const std::string& shaderFrag)
 {
+    m_shader = std::make_unique<Shader>(shaderVert.c_str(), shaderFrag.c_str());
+    m_shader->use();
+
+    cacheUniformLocations();
+
     if (!m_texture.load(texturePath)) return false;
     
-    std::vector<float> vertices;
-    std::vector<unsigned int> indices;
+    std::vector<float> vertexes;
+    std::vector<unsigned int> indexes;
     
-    setupMesh(vertices, indices);
-    setupBuffers(vertices, indices);
+    setupMesh(vertexes, indexes);
+
+    // Upload to GPU
+    setupBuffers(vertexes, indexes);
     
     return true;
 }
 
-void Mesh::render(Shader& shader, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const std::vector<Light>& lights, const glm::vec3& cameraPosition)
 {
-    shader.use();
-    shader.setMat4("model", getModelMatrix());
-    shader.setMat4("view", viewMatrix);
-    shader.setMat4("projection", projectionMatrix);
+    m_shader->use();
 
-    m_texture.bind(0);
-    shader.setInt("material.diffuse", 0);
+    // Send matrices
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(getModelMatrix()));
+    glUniformMatrix4fv(locView,  1, GL_FALSE, glm::value_ptr(viewMatrix));
+    glUniformMatrix4fv(locProjection,  1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
+    // Camera Position
+    glUniform3fv(locViewPosition, 1, glm::value_ptr(cameraPosition));
+
+    // Bind diffuse texture to unit 0
+    glActiveTexture(GL_TEXTURE0);
+    m_texture.bind();
+    m_shader->setInt("material.diffuse", 0);
+
+    // Send Lights
+    for (size_t i = 0; i < lights.size(); i++)
+    {
+        const Light& light = lights[i];
+        glUniform3fv(locLightPosition[i],   1, glm::value_ptr(light.position));
+        glUniform3fv(locLightColor[i], 1, glm::value_ptr(light.color));
+        glUniform1f (locLightConst[i], light.constant);
+        glUniform1f (locLightLinear[i],   light.linear);
+        glUniform1f (locLightQuad[i],  light.quadratic);
+    }
+
+    // Draw
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
@@ -61,10 +91,10 @@ void Mesh::setupBuffers(const std::vector<float>& vertices, const std::vector<un
     glBindVertexArray(m_vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
     // Layout: Position (3 Floats), Normal (3 Floats), Texture Coord (2 Floats).
     constexpr GLsizei stride = 8 * sizeof(float);
@@ -82,4 +112,33 @@ void Mesh::setupBuffers(const std::vector<float>& vertices, const std::vector<un
     glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);
+}
+
+void Mesh::cacheUniformLocations()
+{
+    locModel   = glGetUniformLocation(m_shader->ID, "model");
+    locView    = glGetUniformLocation(m_shader->ID, "view");
+    locProjection    = glGetUniformLocation(m_shader->ID, "projection");
+    locViewPosition = glGetUniformLocation(m_shader->ID, "viewPos");
+
+    locLightPosition.resize(MAX_LIGHTS);
+    locLightColor.resize(MAX_LIGHTS);
+    locLightConst.resize(MAX_LIGHTS);
+    locLightLinear.resize(MAX_LIGHTS);
+    locLightQuad.resize(MAX_LIGHTS);
+
+    char buf[64];
+    for (int i = 0; i < MAX_LIGHTS; i++)
+    {
+        snprintf(buf, sizeof(buf), "lights[%d].position",  i);
+        locLightPosition[i]   = glGetUniformLocation(m_shader->ID, buf);
+        snprintf(buf, sizeof(buf), "lights[%d].color",     i);
+        locLightColor[i] = glGetUniformLocation(m_shader->ID, buf);
+        snprintf(buf, sizeof(buf), "lights[%d].constant",  i);
+        locLightConst[i] = glGetUniformLocation(m_shader->ID, buf);
+        snprintf(buf, sizeof(buf), "lights[%d].linear",    i);
+        locLightLinear[i]   = glGetUniformLocation(m_shader->ID, buf);
+        snprintf(buf, sizeof(buf), "lights[%d].quadratic", i);
+        locLightQuad[i]  = glGetUniformLocation(m_shader->ID, buf);
+    }
 }
