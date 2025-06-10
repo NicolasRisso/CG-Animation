@@ -1,6 +1,6 @@
-^C:\USERS\RISSO\DOWNLOADS\CGANIMATOR_FINAL\BUILD\CMAKEFILES\FB70A2B849DBDEA343891EB71F9F5ACA\GENERATE.STAMP.RULE
+^E:\PROJECTS\USP\CG-ANIMATION\BUILD\CMAKEFILES\30284C59D64B454181A7DFF014A361D0\GENERATE.STAMP.RULE
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/risso/Downloads/cganimator_final -BC:/Users/risso/Downloads/cganimator_final/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/risso/Downloads/cganimator_final/build/CGAnimator.sln
+"C:\Program Files\CMake\bin\cmake.exe" -SE:/Projects/USP/CG-Animation -BE:/Projects/USP/CG-Animation/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/Projects/USP/CG-Animation/build/CGAnimator.sln
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

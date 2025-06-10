@@ -2,8 +2,8 @@
 #define CONFIG_H
 
 // Definições de caminhos para recursos
-#define SHADERS_PATH "C:/Users/risso/Downloads/cganimator_final/build/bin/shaders/"
-#define TEXTURES_PATH "C:/Users/risso/Downloads/cganimator_final/build/bin/textures/"
+#define SHADERS_PATH "E:/Projects/USP/CG-Animation/build/bin/shaders/"
+#define TEXTURES_PATH "E:/Projects/USP/CG-Animation/build/bin/textures/"
 
 // Configurações padrão da aplicação
 #define DEFAULT_WINDOW_WIDTH 1280

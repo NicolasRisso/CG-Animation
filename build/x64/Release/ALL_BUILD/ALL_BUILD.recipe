@@ -2,13 +2,13 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\risso\Downloads\cganimator_final\build\x64\Release\ZERO_CHECK</FullPath>
+      <FullPath>E:\Projects\USP\CG-Animation\build\x64\Release\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\Users\risso\Downloads\cganimator_final\build\bin\Release\CGAnimator.exe</FullPath>
+      <FullPath>E:\Projects\USP\CG-Animation\build\bin\Release\CGAnimator.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\Users\risso\Downloads\cganimator_final\build\x64\Release\ALL_BUILD</FullPath>
+      <FullPath>E:\Projects\USP\CG-Animation\build\x64\Release\ALL_BUILD</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

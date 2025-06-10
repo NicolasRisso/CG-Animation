@@ -1,35 +1,25 @@
 # CMake generation dependency list for this directory.
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeCInformation.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeCXXInformation.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeCommonLanguageInclude.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeGenericSystem.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeInitializeConfigs.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeLanguageInformation.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeRCInformation.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeSystemSpecificInformation.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeSystemSpecificInitialize.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Compiler/CMakeCommonCompilerMacros.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Compiler/MSVC-C.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Compiler/MSVC-CXX.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Compiler/MSVC.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Internal/CMakeCLinkerInformation.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Internal/CMakeCXXLinkerInformation.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Internal/CMakeCommonLinkerInformation.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Linker/MSVC-C.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Linker/MSVC-CXX.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Linker/MSVC.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Linker/Windows-MSVC-C.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Linker/Windows-MSVC-CXX.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Linker/Windows-MSVC.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows-Initialize.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows-MSVC-C.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows-MSVC-CXX.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows-MSVC.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/Windows.cmake
-C:/Program Files/CMake/share/cmake-4.0/Modules/Platform/WindowsPaths.cmake
-C:/Users/risso/Downloads/cganimator_final/CMakeLists.txt
-C:/Users/risso/Downloads/cganimator_final/build/CMakeFiles/4.0.2/CMakeCCompiler.cmake
-C:/Users/risso/Downloads/cganimator_final/build/CMakeFiles/4.0.2/CMakeCXXCompiler.cmake
-C:/Users/risso/Downloads/cganimator_final/build/CMakeFiles/4.0.2/CMakeRCCompiler.cmake
-C:/Users/risso/Downloads/cganimator_final/build/CMakeFiles/4.0.2/CMakeSystem.cmake
-C:/Users/risso/Downloads/cganimator_final/config.h.in
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeCXXInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeGenericSystem.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeRCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Compiler/MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Compiler/MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Compiler/MSVC.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/Windows-MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/Windows-MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/Windows-MSVC.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/Windows.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/WindowsPaths.cmake
+E:/Projects/USP/CG-Animation/CMakeLists.txt
+E:/Projects/USP/CG-Animation/build/CMakeFiles/3.25.0/CMakeCCompiler.cmake
+E:/Projects/USP/CG-Animation/build/CMakeFiles/3.25.0/CMakeCXXCompiler.cmake
+E:/Projects/USP/CG-Animation/build/CMakeFiles/3.25.0/CMakeRCCompiler.cmake
+E:/Projects/USP/CG-Animation/build/CMakeFiles/3.25.0/CMakeSystem.cmake
+E:/Projects/USP/CG-Animation/config.h.in

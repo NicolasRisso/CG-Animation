@@ -1,40 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\src\main.cpp">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\src\window.cpp">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\src\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\src\shader.cpp">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\src\shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\src\cube.cpp">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\src\cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\src\texture.cpp">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\src\texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\src\camera.cpp">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\src\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\src\renderer.cpp">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\src\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\external\glad\glad.c">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\external\glad\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\risso\Downloads\cganimator_final\external\stb_image\stb_image.cpp">
+    <ClCompile Include="E:\Projects\USP\CG-Animation\external\stb_image\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\risso\Downloads\cganimator_final\CMakeLists.txt" />
+    <CustomBuild Include="E:\Projects\USP\CG-Animation\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{24D08837-3076-3ADA-A321-D8858184A54F}</UniqueIdentifier>
+      <UniqueIdentifier>{197BAEE0-8309-3108-BA49-B01C6CCAA0A8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
