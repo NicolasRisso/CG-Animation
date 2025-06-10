@@ -10,6 +10,8 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         std::cerr << "Falha ao inicializar janela" << std::endl;
         return false;
     }
+
+    Shader shader("shaders/cube.vs", "shaders/cube.fs");
     
     // Inicializar renderer
     Renderer renderer(window);
@@ -30,6 +32,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     
     // Configurar posição inicial do cubo
     cube.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    cube.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
     
     // Variáveis para controle de tempo
     float lastFrameTime = 0.0f;
@@ -53,6 +56,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         rotation.y += rotationSpeed * deltaTime;
         rotation.x += rotationSpeed * deltaTime * 0.5f;
         cube.setRotation(rotation);
+        cube.render(shader, camera.getViewMatrix(), camera.getProjectionMatrix(window.getWidth() / window.getHeight()));
         
         // Renderizar frame
         renderer.renderFrame(camera, cube, deltaTime, frameIndex);
