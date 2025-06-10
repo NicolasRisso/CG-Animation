@@ -44,6 +44,9 @@ bool Window::initialize()
     // Configurar callback de redimensionamento
     glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
     glfwSetWindowUserPointer(m_window, this);
+
+    // VSync
+    glfwSwapInterval(1);
     
     // Inicializar GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))

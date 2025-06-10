@@ -89,17 +89,25 @@ public:
                              int frameCount, int fps);
 
 private:
+    /** @brief Configura as luzes iniciais*/
+    void setupLights();
+
+    void cacheUniformLocations();
+    
     Window& m_window;                    ///< Referência para a janela
     Shader m_shader;                     ///< Shader para renderização
     
     static const int MAX_LIGHTS = 4;     ///< Número máximo de luzes
     glm::vec3 m_lightPositions[MAX_LIGHTS]; ///< Posições das luzes
     glm::vec3 m_lightColors[MAX_LIGHTS];    ///< Cores das luzes
-    
-    /**
-     * @brief Configura as luzes iniciais
-     */
-    void setupLights();
+
+    GLint m_shininessLocation;
+    GLint m_viewPositionLocation;
+    std::vector<GLint> m_lightPositionLocations;
+    std::vector<GLint> m_lightColorLocations;
+    std::vector<GLint> m_lightConstLocations;
+    std::vector<GLint> m_lightLinearLocations;
+    std::vector<GLint> m_lightQuadraticLocations;
 };
 
 #endif // RENDERER_H

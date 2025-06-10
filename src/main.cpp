@@ -41,7 +41,8 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     bool renderingComplete = false;
     
     // Loop principal
-    while (!window.shouldClose()) {
+    while (!window.shouldClose())
+    {
         // Calcular tempo delta
         float currentTime = static_cast<float>(glfwGetTime());
         deltaTime = currentTime - lastFrameTime;
@@ -52,32 +53,37 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         
         // Atualizar rotação do cubo
         float rotationSpeed = 45.0f;  // 45 graus por segundo
-        glm::vec3 rotation = cube.getRotation();
+        glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
         rotation.y += rotationSpeed * deltaTime;
         rotation.x += rotationSpeed * deltaTime * 0.5f;
-        cube.setRotation(rotation);
-        cube.render(shader, camera.getViewMatrix(), camera.getProjectionMatrix(window.getWidth() / window.getHeight()));
+        cube.setRotation(cube.getRotation() + rotation);
+        //cube.render(shader, camera.getViewMatrix(), camera.getProjectionMatrix(window.getWidth() / window.getHeight()));
         
         // Renderizar frame
         renderer.renderFrame(camera, cube, deltaTime, frameIndex);
         
         // No modo de renderização, salvar frames e verificar conclusão
-        if (viewMode == ViewMode::RENDER_ONLY || (viewMode == ViewMode::INTERACTIVE && !renderingComplete && frameIndex < totalFrames)) {
-            // Salvar frame como imagem
-            if (!renderer.saveFrameToImage(outputDir, frameIndex)) {
-                std::cerr << "Falha ao salvar frame " << frameIndex << std::endl;
-                return false;
+        if (viewMode == ViewMode::RENDER_ONLY || (viewMode == ViewMode::INTERACTIVE && !renderingComplete && frameIndex < totalFrames))
+        {
+            if (frameIndex < totalFrames)
+            {
+                // Salvar frame como imagem
+                if (viewMode == ViewMode::RENDER_ONLY)
+                {
+                    if (!renderer.saveFrameToImage(outputDir, frameIndex))
+                    {
+                        std::cerr << "Falha ao salvar frame " << frameIndex << std::endl;
+                        return false;
+                    }
+                    frameIndex++;
+                    // Exibir progresso
+                    float progress = static_cast<float>(frameIndex + 1) / static_cast<float>(totalFrames) * 100.0f;
+                    std::cout << "Progresso: " << std::fixed << std::setprecision(1) << progress << "%" << std::endl;
+                }
             }
-            
-            // Exibir progresso
-            float progress = static_cast<float>(frameIndex + 1) / static_cast<float>(totalFrames) * 100.0f;
-            std::cout << "Progresso: " << std::fixed << std::setprecision(1) << progress << "%" << std::endl;
-            
-            // Incrementar índice do frame
-            frameIndex++;
-            
             // Verificar se a renderização foi concluída
-            if (frameIndex >= totalFrames) {
+            else
+            {
                 renderingComplete = true;
                 
                 // Combinar frames em vídeo
@@ -93,9 +99,9 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
                 if (viewMode == ViewMode::RENDER_ONLY) {
                     std::cout << "todos os frames renderizados, saindo do loop\n";
                     break;
-                } else {
-                    std::cout << "Renderização concluída. Pressione ESC para sair ou continue interagindo com a visualização." << std::endl;
                 }
+                
+                std::cout << "Renderização concluída. Pressione ESC para sair ou continue interagindo com a visualização." << std::endl;
             }
         }
         

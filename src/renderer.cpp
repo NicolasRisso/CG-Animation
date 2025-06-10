@@ -6,6 +6,7 @@
 #include <cmath>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Implementação otimizada do Renderer
 
@@ -32,6 +33,9 @@ bool Renderer::initialize()
     // Otimizações OpenGL
     glEnable(GL_CULL_FACE);  // Eliminar faces não visíveis
     glCullFace(GL_BACK);     // Culling de faces traseiras
+
+    m_shader.use();
+    cacheUniformLocations();
     
     return true;
 }
@@ -50,38 +54,32 @@ void Renderer::renderFrame(Camera& camera, Cube& cube, float deltaTime, int curr
     
     // Configurar shader
     m_shader.use();
-    
-    // Configurar propriedades do material
-    m_shader.setFloat("material.shininess", 64.0f);
+
+    glUniform1f(m_shininessLocation, 64.0f);
     
     // Configurar luzes
     for (int i = 0; i < MAX_LIGHTS; i++)
     {
-        std::string lightName = "lights[" + std::to_string(i) + "]";
-        m_shader.setVec3(lightName + ".position", m_lightPositions[i]);
-        m_shader.setVec3(lightName + ".color", m_lightColors[i]);
-        
-        // Configurar atenuação
-        m_shader.setFloat(lightName + ".constant", 1.0f);
-        m_shader.setFloat(lightName + ".linear", 0.09f);
-        m_shader.setFloat(lightName + ".quadratic", 0.032f);
+        glUniform3fv(m_lightPositionLocations[i], 1, glm::value_ptr(m_lightPositions[i]));
+        glUniform3fv(m_lightColorLocations[i], 1, glm::value_ptr(m_lightColors[i]));
+
+        glUniform1f(m_lightConstLocations[i], 1.0f);
+        glUniform1f(m_lightLinearLocations[i], 0.09f);
+        glUniform1f(m_lightQuadraticLocations[i], 0.032f);
     }
-    
-    // Configurar posição da câmera
-    m_shader.setVec3("viewPos", camera.getPosition());
+
+    // Posição da Camera
+    glUniform3fv(m_viewPositionLocation, 1, glm::value_ptr(camera.getPosition()));
     
     // Renderizar cubo
     cube.render(m_shader, camera.getViewMatrix(), 
                 camera.getProjectionMatrix(m_window.getAspectRatio()));
     
     // Registrar tempo de renderização
-    double renderTime = perfMonitor.endOperation("frame_render");
+    const double renderTime = perfMonitor.endOperation("frame_render");
     
     // A cada 60 frames, imprimir estatísticas de desempenho
-    if (currentFrame % 60 == 0) {
-        std::cout << "Frame " << currentFrame << " renderizado em " 
-                  << renderTime << " ms" << std::endl;
-    }
+    if (currentFrame % 60 == 0) std::cout << "Frame " << currentFrame << " renderizado em " << renderTime << " ms" << std::endl; 
 }
 
 bool Renderer::saveFrameToImage(const std::string& outputPath, int frameNumber)
@@ -219,4 +217,31 @@ void Renderer::setupLights()
     m_lightColors[1] = glm::vec3(0.0f, 0.5f, 1.0f);       // Azul claro
     m_lightColors[2] = glm::vec3(0.5f, 1.0f, 0.0f);       // Verde claro
     m_lightColors[3] = glm::vec3(0.8f, 0.0f, 0.5f);       // Roxo
+}
+
+void Renderer::cacheUniformLocations()
+{
+    m_shininessLocation = glGetUniformLocation(m_shader.m_programId, "material.shininess");
+    m_viewPositionLocation = glGetUniformLocation(m_shader.m_programId, "view");
+
+    m_lightPositionLocations.resize(MAX_LIGHTS);
+    m_lightColorLocations.resize(MAX_LIGHTS);
+    m_lightConstLocations.resize(MAX_LIGHTS);
+    m_lightLinearLocations.resize(MAX_LIGHTS);
+    m_lightQuadraticLocations.resize(MAX_LIGHTS);
+
+    char buf[64];
+    for (int i = 0; i < MAX_LIGHTS; ++i)
+    {
+        snprintf(buf, sizeof(buf), "lights[%d].position", i);
+        m_lightPositionLocations[i] = glGetUniformLocation(m_shader.m_programId, buf);
+        snprintf(buf, sizeof(buf), "lights[%d].color", i);
+        m_lightColorLocations[i] = glGetUniformLocation(m_shader.m_programId, buf);
+        snprintf(buf, sizeof(buf), "lights[%d].constant", i);
+        m_lightConstLocations[i] = glGetUniformLocation(m_shader.m_programId, buf);
+        snprintf(buf, sizeof(buf), "lights[%d].linear", i);
+        m_lightLinearLocations[i] = glGetUniformLocation(m_shader.m_programId, buf);
+        snprintf(buf, sizeof(buf), "lights[%d].quadratic", i);
+        m_lightQuadraticLocations[i] = glGetUniformLocation(m_shader.m_programId, buf);
+    }
 }
