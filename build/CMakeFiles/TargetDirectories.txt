@@ -1,3 +1,0 @@
-E:/Projects/USP/CG-Animation/build/CMakeFiles/CGAnimator.dir
-E:/Projects/USP/CG-Animation/build/CMakeFiles/ALL_BUILD.dir
-E:/Projects/USP/CG-Animation/build/CMakeFiles/ZERO_CHECK.dir
