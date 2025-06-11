@@ -40,7 +40,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
     
     // Inicializar cubo
-    SphereObject sphereObj = SphereObject(128, 32, 0.5f);
+    SphereObject sphereObj = SphereObject(128, 32, 0.5f, Transform(0.0f, 0.0f, 0.0f), Material("textures/ShaderToyTextures/Abstract1.jpg"));
     if (!sphereObj.GetMesh()->initialize("textures/metal_texture.jpg", "Shaders/default.vs", "Shaders/default.fs")) {
         std::cerr << "Falha ao inicializar cubo" << '\n';
         return false;
