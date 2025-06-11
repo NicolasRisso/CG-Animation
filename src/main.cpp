@@ -1,5 +1,22 @@
 #include "main.h"
 
+#include "glad/glad.h"
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <filesystem>
+
+#include "window.h"
+#include "camera.h"
+#include "renderer.h"
+#include "Meshes/Custom/Sphere.h"
+#include "Utility/Constants/MathConsts.h"
+
 bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode viewMode) {
     // Criar diretório de saída se não existir
     std::filesystem::create_directories(outputDir);
@@ -19,18 +36,19 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     }
     
     // Inicializar câmera
-    Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+    Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
     
     // Inicializar cubo
-    Cube cube;
-    if (!cube.initialize("textures/metal_texture.jpg", "Shaders/default.vs", "Shaders/default.fs")) {
+    Sphere sphere;
+    sphere.setRadius(0.5f);
+    if (!sphere.initialize("textures/metal_texture.jpg", "Shaders/default.vs", "Shaders/default.fs")) {
         std::cerr << "Falha ao inicializar cubo" << '\n';
         return false;
     }
     
     // Configurar posição inicial do cubo
-    cube.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    cube.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+    sphere.setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+    sphere.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
     
     // Variáveis para controle de tempo
     float lastFrameTime = 0.0f;
@@ -50,12 +68,31 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         window.processInput(deltaTime);
         
         // Atualizar rotação do cubo
-        float rotationSpeed = 45.0f;  // 45 graus por segundo
+        constexpr float rotationSpeed = 45.0f;  // 45 graus por segundo
         glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
         rotation.y += rotationSpeed * deltaTime;
         rotation.x += rotationSpeed * deltaTime * 0.5f;
-        cube.setRotation(cube.getRotation() + rotation);
+        sphere.setRotation(sphere.getRotation() + rotation);
         //cube.render(shader, camera.getViewMatrix(), camera.getProjectionMatrix(window.getWidth() / window.getHeight()));
+
+        // Movimenta a sphere pro lado
+        constexpr float movementAmplitude = 0.5f;
+        constexpr float movementFrequency = 1.0f;
+        
+        float offsetX = movementAmplitude * sinf(2.0f * MathConstants::PI * movementFrequency * currentTime);
+        
+        glm::vec3 newPosition = glm::vec3(0.0f, offsetX, 1.0f);
+        sphere.setPosition(newPosition);
+
+        // Sphere Scale
+        glm::vec3 originalScale = sphere.getScale();
+
+        constexpr float scaleAmplitude = 0.0025f;
+        constexpr float scaleFrequency = 0.1f;
+
+        float scaleOffSet = scaleAmplitude * sinf(2.0f * MathConstants::PI * scaleFrequency * currentTime);
+        glm::vec3 newScale = originalScale + glm::vec3(scaleOffSet);
+        sphere.setScale(newScale);
         
         switch (viewMode)
         {
@@ -115,7 +152,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         }
         
         // Atualizar janela e Renderizar
-        renderer.renderFrame(camera, cube, deltaTime, frameIndex);
+        renderer.renderFrame(camera, sphere, deltaTime, frameIndex);
         
         // No modo interativo, adicionar um pequeno atraso para não sobrecarregar a CPU
         // if (viewMode == ViewMode::INTERACTIVE && renderingComplete) {

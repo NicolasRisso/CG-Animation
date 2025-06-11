@@ -1,25 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <iostream>
 #include <string>
-#include <vector>
-#include <iomanip>
-#include <filesystem>
-#include <chrono>
-#include <thread>
-
-#include "window.h"
-#include "shader.h"
-#include "camera.h"
-#include "cube.h"
-#include "renderer.h"
 
 // Constantes padrão
 const int DEFAULT_WIDTH = 1280;

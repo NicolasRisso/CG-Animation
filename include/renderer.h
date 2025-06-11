@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include "camera.h"
-#include "cube.h"
+#include "Meshes/Mesh.h"
 #include "window.h"
 
 /**
