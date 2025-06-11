@@ -14,7 +14,8 @@
 #include "window.h"
 #include "camera.h"
 #include "renderer.h"
-#include "Meshes/Custom/Sphere.h"
+#include "Object/Custom/SphereObject.h"
+#include "Object/Meshes/Custom/Sphere.h"
 #include "Utility/Constants/MathConsts.h"
 
 bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode viewMode) {
@@ -23,7 +24,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     
     // Inicializar janela
     Window window(DEFAULT_WIDTH, DEFAULT_HEIGHT, "CGAnimator");
-    if (!window.initialize()) {
+    if (!window.initialize(false)) {
         std::cerr << "Falha ao inicializar janela" << '\n';
         return false;
     }
@@ -39,22 +40,28 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
     
     // Inicializar cubo
-    Sphere sphere;
-    sphere.setRadius(0.5f);
-    if (!sphere.initialize("textures/metal_texture.jpg", "Shaders/default.vs", "Shaders/default.fs")) {
+    SphereObject sphereObj = SphereObject(128, 32, 0.5f);
+    if (!sphereObj.GetMesh()->initialize("textures/metal_texture.jpg", "Shaders/default.vs", "Shaders/default.fs")) {
         std::cerr << "Falha ao inicializar cubo" << '\n';
         return false;
     }
     
     // Configurar posição inicial do cubo
-    sphere.setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-    sphere.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+    sphereObj.SetObjectPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+    sphereObj.SetObjectScale(glm::vec3(1.0f, 1.0f, 1.0f));
     
     // Variáveis para controle de tempo
     float lastFrameTime = 0.0f;
     float deltaTime = 0.0f;
     int frameIndex = 0;
     bool renderingComplete = false;
+
+    // Movement Variables
+    const glm::vec3 originalScale = sphereObj.GetObjectScale();
+    
+    // To Show FPS
+    double lastTimeShowedFPS = glfwGetTime();
+    int numOfFramesRenderedInLastSecond = 0;
     
     // Loop principal
     while (!window.shouldClose())
@@ -72,27 +79,25 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
         rotation.y += rotationSpeed * deltaTime;
         rotation.x += rotationSpeed * deltaTime * 0.5f;
-        sphere.setRotation(sphere.getRotation() + rotation);
+        sphereObj.SetObjectRotation(sphereObj.GetObjectRotation() + rotation);
         //cube.render(shader, camera.getViewMatrix(), camera.getProjectionMatrix(window.getWidth() / window.getHeight()));
 
         // Movimenta a sphere pro lado
         constexpr float movementAmplitude = 0.5f;
         constexpr float movementFrequency = 1.0f;
-        
-        float offsetX = movementAmplitude * sinf(2.0f * MathConstants::PI * movementFrequency * currentTime);
+
+        const float offsetX = movementAmplitude * sinf(2.0f * MathConstants::PI * movementFrequency * currentTime);
         
         glm::vec3 newPosition = glm::vec3(0.0f, offsetX, 1.0f);
-        sphere.setPosition(newPosition);
+        sphereObj.SetObjectPosition(newPosition);
 
         // Sphere Scale
-        glm::vec3 originalScale = sphere.getScale();
+        constexpr float scaleAmplitude = 0.5f;
+        constexpr float scaleFrequency = 0.25f;
 
-        constexpr float scaleAmplitude = 0.0025f;
-        constexpr float scaleFrequency = 0.1f;
-
-        float scaleOffSet = scaleAmplitude * sinf(2.0f * MathConstants::PI * scaleFrequency * currentTime);
+        const float scaleOffSet = scaleAmplitude * sinf(2.0f * MathConstants::PI * scaleFrequency * currentTime);
         glm::vec3 newScale = originalScale + glm::vec3(scaleOffSet);
-        sphere.setScale(newScale);
+        sphereObj.SetObjectScale(newScale);
         
         switch (viewMode)
         {
@@ -144,20 +149,17 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
             return false;
         }
         
-        
-        // No modo de renderização, salvar frames e verificar conclusão
-        if (viewMode == ViewMode::RENDER_ONLY || (viewMode == ViewMode::INTERACTIVE && !renderingComplete && frameIndex < totalFrames))
-        {
-
-        }
-        
         // Atualizar janela e Renderizar
-        renderer.renderFrame(camera, sphere, deltaTime, frameIndex);
+        renderer.renderFrame(camera, sphereObj, deltaTime);
+        numOfFramesRenderedInLastSecond++;
         
-        // No modo interativo, adicionar um pequeno atraso para não sobrecarregar a CPU
-        // if (viewMode == ViewMode::INTERACTIVE && renderingComplete) {
-        //     std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
-        // }
+        // Mostrar o FPS na tela
+        if (currentTime - lastTimeShowedFPS > 1.0f)
+        {
+            std::cout << "\rFPS: " << numOfFramesRenderedInLastSecond << std::flush;
+            numOfFramesRenderedInLastSecond = 0;
+            lastTimeShowedFPS = currentTime;
+        }
     }
     
     return true;

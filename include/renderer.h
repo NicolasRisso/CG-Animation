@@ -11,9 +11,10 @@
 #include <string>
 #include <vector>
 #include "camera.h"
-#include "Meshes/Mesh.h"
+#include "Object/Meshes/Mesh.h"
 #include "window.h"
 
+class SceneObject;
 /**
  * @class Renderer
  * @brief Classe para gerenciamento do pipeline de renderização
@@ -40,7 +41,7 @@ public:
      * @param deltaTime Tempo desde o último frame
      * @param currentFrame Número do frame atual
      */
-    void renderFrame(Camera& camera, Mesh& mesh, float deltaTime, int currentFrame);
+    void renderFrame(const Camera& camera, SceneObject& object, float deltaTime);
     
     /**
      * @brief Salva o frame atual como imagem

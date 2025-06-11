@@ -5,10 +5,10 @@
 #include <iomanip>
 #include <cmath>
 #include <vector>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Light.h"
+#include "Object/SceneObject.h"
 
 // Implementação otimizada do Renderer
 
@@ -41,30 +41,20 @@ bool Renderer::initialize()
     return true;
 }
 
-void Renderer::renderFrame(Camera& camera, Mesh& mesh, float deltaTime, int currentFrame)
+void Renderer::renderFrame(const Camera& camera, SceneObject& object, const float deltaTime)
 {
-    // Usar monitor de performance para medir tempo de renderização
-    static PerformanceMonitor perfMonitor;
-    perfMonitor.startOperation("frame_render");
-    
     // Limpar buffer
     m_window.clear(0.05f, 0.05f, 0.05f, 1.0f);
     
     // Atualizar posições das luzes
     updateLights(deltaTime);
 
-    mesh.render(camera.getViewMatrix(), camera.getProjectionMatrix(m_window.getAspectRatio()), m_lights, camera.getPosition());
+    object.Draw(camera.getViewMatrix(), camera.getProjectionMatrix(m_window.getAspectRatio()), camera.getPosition(), m_lights);
     
     m_window.update();
-    
-    // Registrar tempo de renderização
-    const double renderTime = perfMonitor.endOperation("frame_render");
-    
-    // A cada 60 frames, imprimir estatísticas de desempenho
-    if (currentFrame % 60 == 0) std::cout << "Frame " << currentFrame << " renderizado em " << renderTime << " ms" << std::endl; 
 }
 
-bool Renderer::saveFrameToImage(const std::string& outputPath, int frameNumber)
+bool Renderer::saveFrameToImage(const std::string& outputPath, const int frameNumber)
 {
     // Usar monitor de performance para medir tempo de salvamento
     static PerformanceMonitor perfMonitor;

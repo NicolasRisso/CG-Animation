@@ -36,7 +36,7 @@ public:
      * @brief Inicializa a janela e contexto OpenGL
      * @return true se a inicialização foi bem-sucedida, false caso contrário
      */
-    bool initialize();
+    bool initialize(bool bShouldUseVsync = true);
     
     /**
      * @brief Verifica se a janela deve ser fechada

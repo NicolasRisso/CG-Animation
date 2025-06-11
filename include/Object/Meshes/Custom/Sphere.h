@@ -1,16 +1,16 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "Meshes/Mesh.h"
+#include "Object/Meshes/Mesh.h"
 
 class Sphere final : public Mesh
 {
 public:
-    Sphere(unsigned int sectorCount = 36, unsigned int stackCount = 10);
+    explicit Sphere(unsigned int sectorCount = 36, unsigned int stackCount = 10, float radius = 1.0f);
     ~Sphere() override = default;
 
     void setRadius(const float radius) { m_Radius = radius; }
-    float getRadius() const { return m_Radius; }
+    [[nodiscard]] float getRadius() const { return m_Radius; }
     
 protected:
     void setupMesh(std::vector<float>& vertices, std::vector<unsigned int>& indices) override;

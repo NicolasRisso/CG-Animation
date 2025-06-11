@@ -7,7 +7,7 @@
     #define WIN32_LEAN_AND_MEAN  // Reduz inclusões do Windows.h
 #endif
 
-#include "Meshes/Mesh.h"
+#include "Object/Meshes/Mesh.h"
 
 /**
  * @class Cube

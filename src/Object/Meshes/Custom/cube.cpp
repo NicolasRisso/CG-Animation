@@ -1,4 +1,4 @@
-#include "Meshes/Custom/cube.h"
+#include "Object/Meshes/Custom/cube.h"
 #include <vector>
 
 void Cube::setupMesh(std::vector<float>& vertices, std::vector<unsigned int>& indices)

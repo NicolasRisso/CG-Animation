@@ -1,9 +1,11 @@
-#include "Meshes/Custom/Sphere.h"
+#include "Object/Meshes/Custom/Sphere.h"
+
+#include <vector>
 
 #include "Utility/Constants/MathConsts.h"
 
-Sphere::Sphere(const unsigned int sectorCount, const unsigned int stackCount)
-    : m_SectorCount(sectorCount), m_StackCount(stackCount){}
+Sphere::Sphere(const unsigned int sectorCount, const unsigned int stackCount, const float radius)
+    : m_SectorCount(sectorCount), m_StackCount(stackCount), m_Radius(radius){}
 
 void Sphere::setupMesh(std::vector<float>& vertices, std::vector<unsigned int>& indices)
 {

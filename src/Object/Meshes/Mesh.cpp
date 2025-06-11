@@ -1,10 +1,11 @@
-#include "Meshes/Mesh.h"
+#include "Object/Meshes/Mesh.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Light.h"
 
-Mesh::Mesh() = default;
+Mesh::Mesh()
+    : m_Material{Material()}, locModel(0), locView(0), locProjection(0), locViewPosition(0), locMaterialShininess(0) {}
 
 Mesh::~Mesh()
 {
@@ -15,16 +16,13 @@ Mesh::~Mesh()
 
 bool Mesh::initialize(const std::string& texturePath, const std::string& shaderVert, const std::string& shaderFrag)
 {
-    m_shader = std::make_unique<Shader>(shaderVert.c_str(), shaderFrag.c_str());
-    m_shader->use();
-
+    m_Material = Material(shaderVert, shaderFrag, texturePath);
+    m_Material.bind();
+    
     cacheUniformLocations();
-
-    if (!m_texture.load(texturePath)) return false;
     
     std::vector<float> vertexes;
     std::vector<unsigned int> indexes;
-    
     setupMesh(vertexes, indexes);
 
     // Upload to GPU
@@ -33,12 +31,12 @@ bool Mesh::initialize(const std::string& texturePath, const std::string& shaderV
     return true;
 }
 
-void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const std::vector<Light>& lights, const glm::vec3& cameraPosition)
+void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::mat4& modelMatrix, const std::vector<Light>& lights, const glm::vec3& cameraPosition)
 {
-    m_shader->use();
+    m_Material.shader.use();
 
     // Send matrices
-    glUniformMatrix4fv(locModel, 1, GL_FALSE, glm::value_ptr(getModelMatrix()));
+    glUniformMatrix4fv(locModel, 1, GL_FALSE, value_ptr(modelMatrix));
     glUniformMatrix4fv(locView,  1, GL_FALSE, glm::value_ptr(viewMatrix));
     glUniformMatrix4fv(locProjection,  1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
@@ -47,9 +45,9 @@ void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 
     // Bind diffuse texture to unit 0
     glActiveTexture(GL_TEXTURE0);
-    m_texture.bind();
-    m_shader->setInt("material.diffuse", 0);
-    glUniform1f(locMaterialShininess, 32.0f);
+    m_Material.diffuseMap.bind();
+    m_Material.shader.setInt("material.diffuse", 0);
+    glUniform1f(locMaterialShininess, 64.0f);
 
     // Send Lights
     for (size_t i = 0; i < lights.size(); i++)
@@ -67,18 +65,7 @@ void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    m_texture.unbind();
-}
-
-glm::mat4 Mesh::getModelMatrix() const
-{
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, m_position);
-    model = glm::rotate(model, glm::radians(m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(m_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(m_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, m_scale);
-    return model;
+    m_Material.diffuseMap.unbind();
 }
 
 void Mesh::setupBuffers(const std::vector<float>& vertices, const std::vector<unsigned int>& indices)
@@ -117,11 +104,11 @@ void Mesh::setupBuffers(const std::vector<float>& vertices, const std::vector<un
 
 void Mesh::cacheUniformLocations()
 {
-    locModel   = glGetUniformLocation(m_shader->ID, "model");
-    locView    = glGetUniformLocation(m_shader->ID, "view");
-    locProjection    = glGetUniformLocation(m_shader->ID, "projection");
-    locViewPosition = glGetUniformLocation(m_shader->ID, "viewPos");
-    locMaterialShininess = glGetUniformLocation(m_shader->ID, "material.shininess");
+    locModel = glGetUniformLocation(m_Material.shader.ID, "model");
+    locView = glGetUniformLocation(m_Material.shader.ID, "view");
+    locProjection = glGetUniformLocation(m_Material.shader.ID, "projection");
+    locViewPosition = glGetUniformLocation(m_Material.shader.ID, "viewPos");
+    locMaterialShininess = glGetUniformLocation(m_Material.shader.ID, "material.shininess");
 
     locLightPosition.resize(MAX_LIGHTS);
     locLightColor.resize(MAX_LIGHTS);
@@ -133,14 +120,14 @@ void Mesh::cacheUniformLocations()
     for (int i = 0; i < MAX_LIGHTS; i++)
     {
         snprintf(buf, sizeof(buf), "lights[%d].position",  i);
-        locLightPosition[i]   = glGetUniformLocation(m_shader->ID, buf);
+        locLightPosition[i]   = glGetUniformLocation(m_Material.shader.ID, buf);
         snprintf(buf, sizeof(buf), "lights[%d].color",     i);
-        locLightColor[i] = glGetUniformLocation(m_shader->ID, buf);
+        locLightColor[i] = glGetUniformLocation(m_Material.shader.ID, buf);
         snprintf(buf, sizeof(buf), "lights[%d].constant",  i);
-        locLightConst[i] = glGetUniformLocation(m_shader->ID, buf);
+        locLightConst[i] = glGetUniformLocation(m_Material.shader.ID, buf);
         snprintf(buf, sizeof(buf), "lights[%d].linear",    i);
-        locLightLinear[i]   = glGetUniformLocation(m_shader->ID, buf);
+        locLightLinear[i]   = glGetUniformLocation(m_Material.shader.ID, buf);
         snprintf(buf, sizeof(buf), "lights[%d].quadratic", i);
-        locLightQuad[i]  = glGetUniformLocation(m_shader->ID, buf);
+        locLightQuad[i]  = glGetUniformLocation(m_Material.shader.ID, buf);
     }
 }

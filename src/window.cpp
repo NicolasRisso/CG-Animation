@@ -15,7 +15,7 @@ Window::~Window()
     glfwTerminate();
 }
 
-bool Window::initialize()
+bool Window::initialize(bool bShouldUseVsync)
 {
     // Inicializar GLFW
     if (!glfwInit())
@@ -46,7 +46,7 @@ bool Window::initialize()
     glfwSetWindowUserPointer(m_window, this);
 
     // VSync
-    glfwSwapInterval(1);
+    glfwSwapInterval(bShouldUseVsync ? 1 : 0);
     
     // Inicializar GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
