@@ -3,6 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Light.h"
+#include "Utility/Constants/EngineLimits.h"
 
 Mesh::Mesh()
     : m_Material{Material()}, locModel(0), locView(0), locProjection(0), locViewPosition(0), locMaterialShininess(0) {}
@@ -110,14 +111,14 @@ void Mesh::cacheUniformLocations()
     locViewPosition = glGetUniformLocation(m_Material.shader.ID, "viewPos");
     locMaterialShininess = glGetUniformLocation(m_Material.shader.ID, "material.shininess");
 
-    locLightPosition.resize(MAX_LIGHTS);
-    locLightColor.resize(MAX_LIGHTS);
-    locLightConst.resize(MAX_LIGHTS);
-    locLightLinear.resize(MAX_LIGHTS);
-    locLightQuad.resize(MAX_LIGHTS);
+    locLightPosition.resize(EngineLimits::MAX_LIGHTS);
+    locLightColor.resize(EngineLimits::MAX_LIGHTS);
+    locLightConst.resize(EngineLimits::MAX_LIGHTS);
+    locLightLinear.resize(EngineLimits::MAX_LIGHTS);
+    locLightQuad.resize(EngineLimits::MAX_LIGHTS);
 
     char buf[64];
-    for (int i = 0; i < MAX_LIGHTS; i++)
+    for (int i = 0; i < EngineLimits::MAX_LIGHTS; i++)
     {
         snprintf(buf, sizeof(buf), "lights[%d].position",  i);
         locLightPosition[i]   = glGetUniformLocation(m_Material.shader.ID, buf);

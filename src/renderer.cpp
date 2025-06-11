@@ -9,6 +9,7 @@
 
 #include "Light.h"
 #include "Object/SceneObject.h"
+#include "Utility/Constants/EngineLimits.h"
 
 // Implementação otimizada do Renderer
 
@@ -144,7 +145,7 @@ void Renderer::updateLights(float deltaTime)
 
 void Renderer::setLightColor(const int lightIndex, const glm::vec3& color)
 {
-    if (lightIndex >= 0 && lightIndex < MAX_LIGHTS)
+    if (lightIndex >= 0 && lightIndex < EngineLimits::MAX_LIGHTS)
     {
         m_lights[lightIndex].color = color;
     }
@@ -152,7 +153,7 @@ void Renderer::setLightColor(const int lightIndex, const glm::vec3& color)
 
 void Renderer::setLightPosition(const int lightIndex, const glm::vec3& position)
 {
-    if (lightIndex >= 0 && lightIndex < MAX_LIGHTS)
+    if (lightIndex >= 0 && lightIndex < EngineLimits::MAX_LIGHTS)
     {
         m_lights[lightIndex].position = position;
     }
@@ -179,7 +180,7 @@ bool Renderer::combineFramesToVideo(const std::string& framesPath, const std::st
 
 void Renderer::setupLights()
 {
-    m_lights.resize(MAX_LIGHTS);
+    m_lights.resize(EngineLimits::MAX_LIGHTS);
 
     // Configurar posições iniciais das luzes
     m_lights[0].position = glm::vec3(0.0f, 2.0f, 0.0f);

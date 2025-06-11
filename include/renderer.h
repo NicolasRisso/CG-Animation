@@ -86,9 +86,6 @@ private:
     float m_accumulateTime = 0.0f;
 
     std::vector<Light> m_lights;
-
-    // REMOVE REMOVE REMOVE REMOVE:
-    const int MAX_LIGHTS = 4;
+    
 };
-
 #endif

@@ -49,8 +49,5 @@ private:
     GLint locMaterialShininess;
     std::vector<GLint> locLightPosition, locLightColor, locLightConst, locLightLinear, locLightQuad;
 
-    // REMOVE REMOVE:
-    const int MAX_LIGHTS = 4;
 };
-
 #endif
