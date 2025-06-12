@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
+    : m_vertexPath(vertexPath), m_fragmentPath(fragmentPath)
 {
     // 1. Recuperar o código fonte do vertex/fragment shader a partir do caminho do arquivo
     std::string vertexCode;
@@ -70,7 +71,17 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     glDeleteShader(fragment);
 }
 
-void Shader::use() 
+std::string Shader::getVertexPath() const
+{
+    return m_vertexPath;
+}
+
+std::string Shader::getFragmentPath() const
+{
+    return m_fragmentPath;
+}
+
+void Shader::use()
 { 
     glUseProgram(ID); 
 }

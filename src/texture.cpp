@@ -10,7 +10,9 @@ Texture::Texture()
 Texture::Texture(const std::string& filePath)
     : m_id(0), m_width(0), m_height(0), m_channels(0)
 {
-    load(filePath);
+    if (load(filePath)) {
+        m_filePath = filePath;
+    }
 }
 
 Texture::~Texture()
@@ -23,6 +25,7 @@ Texture::~Texture()
 
 bool Texture::load(const std::string& filePath)
 {
+    m_filePath = filePath;
     // Gerar textura
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
@@ -96,4 +99,9 @@ int Texture::getHeight() const
 int Texture::getChannels() const
 {
     return m_channels;
+}
+
+std::string Texture::getFilePath() const
+{
+    return m_filePath;
 }

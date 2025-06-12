@@ -22,7 +22,7 @@ public:
      * @param shaderVert Caminho para o .vs do Shader
      * @param shaderFrag Caminho para o .fs do Shader
      * @return true se a inicialização foi bem-sucedida, false caso contrário */
-    bool initialize(const std::string& texturePath, const std::string& shaderVert = "Shaders/default.vs", const std::string& shaderFrag = "Shaders/default.fs");
+    bool initialize();
 
     /** @brief Renderiza a Malha
      * @param viewMatrix Matriz de visualização

@@ -15,13 +15,16 @@ Mesh::~Mesh()
     if (m_vao) glDeleteVertexArrays(1, &m_vao);
 }
 
-bool Mesh::initialize(const std::string& texturePath, const std::string& shaderVert, const std::string& shaderFrag)
+bool Mesh::initialize()
 {
-    m_Material = Material(shaderVert, shaderFrag, texturePath);
-    m_Material.bind();
-    
+    m_Material.shader.use();
+
+    glActiveTexture(GL_TEXTURE0);
+    m_Material.diffuseMap.bind();
+    m_Material.shader.setInt("material.diffuse", 0);
+
     cacheUniformLocations();
-    
+
     std::vector<float> vertexes;
     std::vector<unsigned int> indexes;
     setupMesh(vertexes, indexes);

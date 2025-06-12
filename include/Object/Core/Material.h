@@ -36,4 +36,8 @@ struct Material
         diffuseMap.bind();
         shader.setVec3("material.color", diffuseColor);
     }
+
+    std::string getTexturePath() const { return diffuseMap.getFilePath(); }
+    std::string getVertexShaderPath() const { return shader.getVertexPath(); }
+    std::string getFragmentShaderPath() const { return shader.getFragmentPath(); }
 };
