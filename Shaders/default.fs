@@ -49,50 +49,48 @@ vec3 calculateMetallicEffect(vec2 texCoords, vec3 normal, vec3 viewDir) {
 }
 
 void main() {
-    // Propriedades do material
-    vec3 normal = normalize(Normal);
-    vec3 viewDir = normalize(viewPos - FragPos);
-    vec4 diffuseTexColor = texture(material.diffuse, TexCoords);
+    // vec3 normal = normalize(Normal);
+    // vec3 viewDir = normalize(viewPos - FragPos);
     
-    // Calcular efeito metálico cobre-ouro
-    // vec3 metallicColor = calculateMetallicEffect(TexCoords, normal, viewDir);
-    vec3 surfaceColor = diffuseTexColor.rgb;
+    // vec4 diffuseTexColor = texture(material.diffuse, TexCoords);
+    // // vec3 metallicColor = calculateMetallicEffect(TexCoords, normal, viewDir);
+    // vec3 surfaceColor = diffuseTexColor.rgb;
+
+    // // Iluminação ambiente base
+    // vec3 ambient = vec3(0.1) * surfaceColor;
     
-    // Iluminação ambiente base
-    vec3 ambient = vec3(0.1) * surfaceColor;
+    // // Resultado final da iluminação
+    // vec3 result = ambient;
     
-    // Resultado final da iluminação
-    vec3 result = ambient;
+    // // Calcular contribuição de cada luz
+    // for(int i = 0; i < MAX_LIGHTS; i++) {
+    //     // Direção da luz
+    //     vec3 lightDir = normalize(lights[i].position - FragPos);
+        
+    //     // Difuso
+    //     float diff = max(dot(normal, lightDir), 0.0);
+    //     vec3 diffuse = diff * lights[i].color * surfaceColor;
+        
+    //     // Especular
+    //     vec3 reflectDir = reflect(-lightDir, normal);
+    //     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //     vec3 specular = spec * lights[i].color;
+        
+    //     // Atenuação
+    //     float distance = length(lights[i].position - FragPos);
+    //     float attenuation = 1.0 / (lights[i].constant + lights[i].linear * distance +
+    //                         lights[i].quadratic * (distance * distance));
+        
+    //     // Aplicar atenuação
+    //     diffuse *= attenuation;
+    //     specular *= attenuation;
+        
+    //     // Adicionar à iluminação total
+    //     result += diffuse + specular;
+    // }
     
-    // Calcular contribuição de cada luz
-    for(int i = 0; i < MAX_LIGHTS; i++) {
-        // Direção da luz
-        vec3 lightDir = normalize(lights[i].position - FragPos);
-        
-        // Difuso
-        float diff = max(dot(normal, lightDir), 0.0);
-        vec3 diffuse = diff * lights[i].color * surfaceColor;
-        
-        // Especular
-        vec3 reflectDir = reflect(-lightDir, normal);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-        vec3 specular = spec * lights[i].color;
-        
-        // Atenuação
-        float distance = length(lights[i].position - FragPos);
-        float attenuation = 1.0 / (lights[i].constant + lights[i].linear * distance +
-                            lights[i].quadratic * (distance * distance));
-        
-        // Aplicar atenuação
-        diffuse *= attenuation;
-        specular *= attenuation;
-        
-        // Adicionar à iluminação total
-        result += diffuse + specular;
-    }
-    
-    // Saída final
-    FragColor = vec4(result, 1.0);
-    // FragColor = vec4(1.0, 0.0, 0.0, 1.0); // Solid red color
-    // FragColor = vec4(metallicColor, 1.0);
+    // // Saída final
+    // FragColor = vec4(result, 1.0);
+
+    FragColor = vec4(1.0, 0.0, 1.0, 1.0); // Magenta
 }
