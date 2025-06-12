@@ -29,6 +29,9 @@ public:
      * @param projectionMatrix Matriz de projeção */
     void render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::mat4& modelMatrix, const std::vector<class Light>& lights, const glm::vec3& cameraPosition);
 
+    void setMaterial(const Material& newMaterial) { m_Material = newMaterial; }
+    [[nodiscard]] Material getMaterial() const { return m_Material; }
+
 protected:
     /** Cada subclasse da Malha deve preencher seus próprios vértices e índices usando essa função. */
     virtual void setupMesh(std::vector<float>& vertices, std::vector<unsigned int>& indices) = 0;
