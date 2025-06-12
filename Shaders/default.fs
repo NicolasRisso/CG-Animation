@@ -52,12 +52,14 @@ void main() {
     // Propriedades do material
     vec3 normal = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
+    vec4 diffuseTexColor = texture(material.diffuse, TexCoords);
     
     // Calcular efeito metálico cobre-ouro
-    vec3 metallicColor = calculateMetallicEffect(TexCoords, normal, viewDir);
+    // vec3 metallicColor = calculateMetallicEffect(TexCoords, normal, viewDir);
+    vec3 surfaceColor = diffuseTexColor.rgb;
     
     // Iluminação ambiente base
-    vec3 ambient = vec3(0.1) * metallicColor;
+    vec3 ambient = vec3(0.1) * surfaceColor;
     
     // Resultado final da iluminação
     vec3 result = ambient;
@@ -69,7 +71,7 @@ void main() {
         
         // Difuso
         float diff = max(dot(normal, lightDir), 0.0);
-        vec3 diffuse = diff * lights[i].color * metallicColor;
+        vec3 diffuse = diff * lights[i].color * surfaceColor;
         
         // Especular
         vec3 reflectDir = reflect(-lightDir, normal);
