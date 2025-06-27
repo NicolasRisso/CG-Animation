@@ -42,7 +42,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     
     // Inicializar cubo
     // SphereObject sphereObj = SphereObject(128, 32, 0.5f, Transform(0.0f, 0.0f, 0.0f), Material("textures/ShaderToyTextures/Abstract1.jpg"));
-    CubeObject cubeObj(Transform(0.0f, 0.0f, 0.0f), Material("textures/ShaderToyTextures/Abstract1.jpg"));
+    CubeObject cubeObj(Transform(0.0f, 0.0f, 0.0f), Material());
     
     // Configurar posição inicial do cubo
     cubeObj.SetObjectPosition(glm::vec3(1.0f, 0.0f, 0.0f));

@@ -49,7 +49,7 @@ private:
     
     // Cached uniform locations
     GLint locModel, locView, locProjection, locViewPosition;
-    GLint locMaterialShininess;
+    GLint locMaterialShininess, locMaterialDiffuse;
     std::vector<GLint> locLightPosition, locLightColor, locLightConst, locLightLinear, locLightQuad;
 
 };
