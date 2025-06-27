@@ -31,9 +31,22 @@ struct Material
     void bind()
     {
         shader.use();
-        shader.setInt("material.diffuse", 0);
+
+        // 1) bind da textura na unit 0
         glActiveTexture(GL_TEXTURE0);
         diffuseMap.bind();
-        shader.setVec3("material.color", diffuseColor);
+        shader.setInt("material.diffuse", 0);
+
+        // 2) seta a shininess que o shader espera
+        GLint locShine = glGetUniformLocation(shader.ID, "material.shininess");
+        if (locShine >= 0) {
+            glUniform1f(locShine, /* por exemplo */ 32.0f);
+        }
+
+        shader.setVec3("material.diffuseColor", diffuseColor);
     }
+
+    std::string getTexturePath() const { return diffuseMap.getFilePath(); }
+    std::string getVertexShaderPath() const { return shader.getVertexPath(); }
+    std::string getFragmentShaderPath() const { return shader.getFragmentPath(); }
 };

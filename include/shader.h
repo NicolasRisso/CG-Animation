@@ -101,7 +101,22 @@ public:
      */
     void setMat4(const std::string &name, glm::mat4 matrix) const;
 
+    /**
+     * @brief Obtém o caminho do arquivo do vertex shader
+     * @return Caminho do arquivo do vertex shader
+     */
+    std::string getVertexPath() const;
+
+    /**
+     * @brief Obtém o caminho do arquivo do fragment shader
+     * @return Caminho do arquivo do fragment shader
+     */
+    std::string getFragmentPath() const;
+
 private:
+    std::string m_vertexPath;   ///< Caminho para o arquivo do vertex shader
+    std::string m_fragmentPath; ///< Caminho para o arquivo do fragment shader
+
     /**
      * @brief Verifica erros de compilação/vinculação de shader
      * @param shader ID do shader ou programa

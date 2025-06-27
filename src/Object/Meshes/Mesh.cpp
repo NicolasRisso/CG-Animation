@@ -15,13 +15,17 @@ Mesh::~Mesh()
     if (m_vao) glDeleteVertexArrays(1, &m_vao);
 }
 
-bool Mesh::initialize(const std::string& texturePath, const std::string& shaderVert, const std::string& shaderFrag)
+bool Mesh::initialize()
 {
-    m_Material = Material(shaderVert, shaderFrag, texturePath);
-    m_Material.bind();
-    
+    m_Material.shader.use();
+
     cacheUniformLocations();
+    if (locMaterialDiffuse >= 0) glUniform1i(locMaterialDiffuse, 0);
+    if (locMaterialShininess >= 0) glUniform1f(locMaterialShininess, 64.0f);
     
+    glActiveTexture(GL_TEXTURE0);
+    m_Material.diffuseMap.bind();
+
     std::vector<float> vertexes;
     std::vector<unsigned int> indexes;
     setupMesh(vertexes, indexes);
@@ -34,7 +38,7 @@ bool Mesh::initialize(const std::string& texturePath, const std::string& shaderV
 
 void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::mat4& modelMatrix, const std::vector<Light>& lights, const glm::vec3& cameraPosition)
 {
-    m_Material.shader.use();
+    m_Material.bind();
 
     // Send matrices
     glUniformMatrix4fv(locModel, 1, GL_FALSE, value_ptr(modelMatrix));
@@ -45,10 +49,8 @@ void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
     glUniform3fv(locViewPosition, 1, glm::value_ptr(cameraPosition));
 
     // Bind diffuse texture to unit 0
-    glActiveTexture(GL_TEXTURE0);
-    m_Material.diffuseMap.bind();
-    m_Material.shader.setInt("material.diffuse", 0);
-    glUniform1f(locMaterialShininess, 64.0f);
+    //glActiveTexture(GL_TEXTURE0);
+    //m_Material.diffuseMap.bind();
 
     // Send Lights
     for (size_t i = 0; i < lights.size(); i++)
@@ -63,10 +65,10 @@ void Mesh::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix
 
     // Draw
     glBindVertexArray(m_vao);
-    glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 
-    m_Material.diffuseMap.unbind();
+    //m_Material.diffuseMap.unbind();
 }
 
 void Mesh::setupBuffers(const std::vector<float>& vertices, const std::vector<unsigned int>& indices)
@@ -110,6 +112,7 @@ void Mesh::cacheUniformLocations()
     locProjection = glGetUniformLocation(m_Material.shader.ID, "projection");
     locViewPosition = glGetUniformLocation(m_Material.shader.ID, "viewPos");
     locMaterialShininess = glGetUniformLocation(m_Material.shader.ID, "material.shininess");
+    locMaterialDiffuse = glGetUniformLocation(m_Material.shader.ID, "material.diffuse");
 
     locLightPosition.resize(EngineLimits::MAX_LIGHTS);
     locLightColor.resize(EngineLimits::MAX_LIGHTS);

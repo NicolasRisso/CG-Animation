@@ -75,11 +75,18 @@ public:
      */
     int getChannels() const;
 
+    /**
+     * @brief Obtém o caminho do arquivo da textura
+     * @return Caminho do arquivo da textura
+     */
+    std::string getFilePath() const;
+
 private:
     unsigned int m_id;       ///< ID da textura OpenGL
     int m_width;             ///< Largura da textura em pixels
     int m_height;            ///< Altura da textura em pixels
     int m_channels;          ///< Número de canais da textura
+    std::string m_filePath;  ///< Caminho para o arquivo de textura
 };
 
 #endif // TEXTURE_H
