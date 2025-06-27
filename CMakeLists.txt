@@ -38,11 +38,19 @@ file(GLOB_RECURSE APP_SOURCES
 file(GLOB_RECURSE APP_HEADERS
     "${INCLUDE_DIR}/*.h"
 )
+file(GLOB_RECURSE SHADER_FILES
+    "${SHADERS_DIR}/*.vert"
+    "${SHADERS_DIR}/*.frag"
+    "${SHADERS_DIR}/*.vs"
+    "${SHADERS_DIR}/*.fs"
+)
 
 add_executable(${PROJECT_NAME}
     ${APP_SOURCES}
     ${APP_HEADERS}
 )
+
+target_sources(${PROJECT_NAME} PRIVATE ${SHADER_FILES})
 
 # Coloca o .exe em build/bin/
 set_target_properties(${PROJECT_NAME} PROPERTIES

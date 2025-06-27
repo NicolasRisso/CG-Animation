@@ -8,5 +8,5 @@ class CubeObject : public SceneObject {
 public:
     explicit CubeObject(const Material& material);
     CubeObject(const Transform& transform, const Material& material);
-    ~CubeObject() override = default;
+    ~CubeObject() = default;
 };

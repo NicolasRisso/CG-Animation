@@ -9,7 +9,8 @@ struct Transform
     glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    Transform(float x, float y, float z)
+    Transform() : position(0.0f, 0.0f, 0.0f), rotation(0.0f, 0.0f, 0.0f), scale(1.0f) {}
+    Transform(const float x, const float y, const float z)
         : position(glm::vec3(x, y, z)), rotation(glm::vec3(0, 0, 0)){}
     Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
         : position(position), rotation(rotation), scale(scale){}
