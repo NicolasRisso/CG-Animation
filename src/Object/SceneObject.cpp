@@ -1,15 +1,33 @@
 #include "Object/SceneObject.h"
 
+static int s_NextID = 0;
+
 SceneObject::SceneObject(Mesh* mesh, const Material& material)
     : m_Transform(0.0f, 0.0f, 0.0f), m_Mesh(mesh)
 {
     m_Mesh->setMaterial(material);
+    m_Name = "SceneObject" + std::to_string(++s_NextID);
 }
 
 SceneObject::SceneObject(Transform transform, Mesh* mesh, const Material& material)
     : m_Transform(transform), m_Mesh(mesh)
 {
     m_Mesh->setMaterial(material);
+    m_Name = "SceneObject" + std::to_string(++s_NextID);
+}
+
+SceneObject::SceneObject(const std::string& name, Mesh* mesh, const Material& material)
+    : m_Transform(0.0f, 0.0f, 0.0f), m_Mesh(mesh)
+{
+    m_Mesh->setMaterial(material);
+    m_Name = name;
+}
+
+SceneObject::SceneObject(const std::string& name, Transform transform, Mesh* mesh, const Material& material)
+    : m_Transform(transform), m_Mesh(mesh)
+{
+    m_Mesh->setMaterial(material);
+    m_Name = name;
 }
 
 void SceneObject::Draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec3& cameraPosition,

@@ -1,4 +1,5 @@
 #pragma once
+
 #include <memory>
 
 #include "Core/Material.h"
@@ -10,8 +11,14 @@ class SceneObject
 public:
     SceneObject(Mesh* mesh, const Material& material);
     SceneObject(Transform transform, Mesh* mesh, const Material& material);
+    SceneObject(const std::string& name, Mesh* mesh, const Material& material);
+    SceneObject(const std::string& name, Transform transform, Mesh* mesh, const Material& material);
 
     void Draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec3& cameraPosition, const std::vector<Light>& lights) const;
+
+    // Name Getters and Setters
+    [[nodiscard]] std::string GetName() const { return m_Name; }
+    void SetName(const std::string& name) { m_Name = name; }
     
     // Core Getters and Setters
     [[nodiscard]] Transform GetTransform() const { return m_Transform; }
@@ -32,6 +39,8 @@ public:
     void SetObjectScale(const glm::vec3& scale) { m_Transform.scale = scale; }
     
 private:
+    std::string m_Name;
+    
     Transform m_Transform;
     std::unique_ptr<Mesh> m_Mesh;
 };
