@@ -14,6 +14,7 @@
 #include "window.h"
 #include "camera.h"
 #include "renderer.h"
+#include "Object/Components/Custom/RotationComponent.h"
 #include "Object/Custom/SphereObject.h"
 #include "Object/Custom/CubeObject.h" // Adicionada inclusão para CubeObject
 #include "Object/Meshes/Custom/Sphere.h"
@@ -40,12 +41,16 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     // Inicializar câmera
     Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
     
-    // Inicializar cubo
-    // SphereObject sphereObj = SphereObject(128, 32, 0.5f, Transform(0.0f, 0.0f, 0.0f), Material("textures/ShaderToyTextures/Abstract1.jpg"));
+    // Inicializar SceneObjects
+    //auto sphereObj = std::make_unique<SphereObject>(128, 32, 0.5f, Transform(0.0f, 0.0f, 0.0f), Material());
+    
     auto cubeObj = std::make_unique<CubeObject>(Transform(0.0f, 0.0f, 0.0f), Material());
+    cubeObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
+    auto cubeObj1 = std::make_unique<CubeObject>(Transform(1.0f, 0.0f, 0.0f), Material());
 
     Scene scene;
     scene.AddObjectToScene(std::move(cubeObj));
+    scene.AddObjectToScene(std::move(cubeObj1));
     
     // Variáveis para controle de tempo
     float lastFrameTime = 0.0f;
@@ -141,6 +146,9 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
             std::cout << "Passe um modo de renderização válido ao executar usando \"-mode MODO\" no terminal. Modos são \"render\" e \"interactive\"." << std::endl;
             return false;
         }
+
+        // Tickar a Scene
+        scene.TickAll(deltaTime);
         
         // Atualizar janela e Renderizar
         renderer.renderFrame(camera, scene, deltaTime);

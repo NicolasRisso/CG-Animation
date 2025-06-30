@@ -10,17 +10,17 @@ class IComponent
 public:
     virtual ~IComponent() = default;
 
-    virtual void Start() = 0;
-    virtual void Tick(const float DeltaTime) = 0;
+    virtual void Start() {}
+    virtual void Tick(const float DeltaTime) {}
 
     void SetOwner(SceneObject* owner) { m_Owner = owner; }
     SceneObject* GetOwner() const { return m_Owner; }
 
     // Memory Logic
     template<typename T>
-    void SetVariable(const std::string& name, const T&& value)
+    void SetVariable(const std::string& name, const T value)
     {
-        m_MemoryVariables[name] = std::forward<T>(value);
+        m_MemoryVariables[name] = std::move(value);
     }
     template<typename T>
     T GetVariable(const std::string& name) const
