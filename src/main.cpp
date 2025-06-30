@@ -17,6 +17,7 @@
 #include "Object/Components/Custom/RotationComponent.h"
 #include "Object/Custom/SphereObject.h"
 #include "Object/Custom/CubeObject.h" // Adicionada inclusão para CubeObject
+#include "Object/Custom/Letters/LetterAObject.h"
 #include "Object/Meshes/Custom/Sphere.h"
 #include "Utility/Constants/MathConsts.h"
 
@@ -42,15 +43,20 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
     
     // Inicializar SceneObjects
-    //auto sphereObj = std::make_unique<SphereObject>(128, 32, 0.5f, Transform(0.0f, 0.0f, 0.0f), Material());
+    auto sphereObj = std::make_unique<SphereObject>(128, 32, 0.5f, Transform(-1.0f, 0.0f, 0.0f), Material());
     
     auto cubeObj = std::make_unique<CubeObject>(Transform(0.0f, 0.0f, 0.0f), Material());
     cubeObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
     auto cubeObj1 = std::make_unique<CubeObject>(Transform(1.0f, 0.0f, 0.0f), Material());
 
+    auto letterAObj = std::make_unique<LetterAObject>(1.f, 2.f, 0.1f, 0.5f, Transform(2.0f, 0.0f, 0.0f), Material());
+    letterAObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
+
     Scene scene;
     scene.AddObjectToScene(std::move(cubeObj));
     scene.AddObjectToScene(std::move(cubeObj1));
+    scene.AddObjectToScene(std::move(sphereObj));
+    scene.AddObjectToScene(std::move(letterAObj));
     
     // Variáveis para controle de tempo
     float lastFrameTime = 0.0f;
