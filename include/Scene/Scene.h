@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <unordered_map>
 
@@ -7,9 +8,12 @@
 class Scene
 {
 public:
+    void StartAll();
+    void TickAll(const float DeltaTime);
+    
     /** Tries adding given SceneObject to the Scene.
      * If they were already an Object with this name returns false. */
-    bool AddObjectToScene(SceneObject object);
+    bool AddObjectToScene(std::unique_ptr<SceneObject> object);
 
     /** Tries removing a given object from the scene. */
     bool RemoveObjectFromScene(const SceneObject& object);
@@ -21,8 +25,8 @@ public:
     SceneObject* GetObjectFromScene(const std::string& name);
 
     /** Return all objects from the scene. */
-    std::vector<SceneObject> GetObjectsFromScene() const;
+    std::vector<SceneObject*> GetObjectsFromScene() const;
 
 private:
-    std::pmr::unordered_map<std::string, SceneObject> m_Objects;
+    std::unordered_map<std::string, std::unique_ptr<SceneObject>> m_Objects;
 };

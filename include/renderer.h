@@ -7,12 +7,12 @@
     #define WIN32_LEAN_AND_MEAN  // Reduz inclusões do Windows.h
 #endif
 
-#include <glad/glad.h>
 #include <string>
 #include <vector>
 #include "camera.h"
 #include "Object/Meshes/Mesh.h"
 #include "window.h"
+#include "Scene/Scene.h"
 
 class SceneObject;
 /**
@@ -41,8 +41,8 @@ public:
      * @param deltaTime Tempo desde o último frame
      * @param currentFrame Número do frame atual
      */
-    void renderFrame(const Camera& camera, SceneObject& object, float deltaTime);
-    
+    void renderFrame(const Camera& camera, const Scene& scene, float deltaTime);
+
     /**
      * @brief Salva o frame atual como imagem
      * @param outputPath Caminho para salvar a imagem

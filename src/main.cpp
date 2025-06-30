@@ -42,20 +42,16 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     
     // Inicializar cubo
     // SphereObject sphereObj = SphereObject(128, 32, 0.5f, Transform(0.0f, 0.0f, 0.0f), Material("textures/ShaderToyTextures/Abstract1.jpg"));
-    CubeObject cubeObj(Transform(0.0f, 0.0f, 0.0f), Material());
-    
-    // Configurar posição inicial do cubo
-    cubeObj.SetObjectPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-    cubeObj.SetObjectScale(glm::vec3(1.0f, 1.0f, 1.0f));
+    auto cubeObj = std::make_unique<CubeObject>(Transform(0.0f, 0.0f, 0.0f), Material());
+
+    Scene scene;
+    scene.AddObjectToScene(std::move(cubeObj));
     
     // Variáveis para controle de tempo
     float lastFrameTime = 0.0f;
     float deltaTime = 0.0f;
     int frameIndex = 0;
     bool renderingComplete = false;
-
-    // Movement Variables
-    const glm::vec3 originalScale = cubeObj.GetObjectScale();
     
     // To Show FPS
     double lastTimeShowedFPS = glfwGetTime();
@@ -73,29 +69,28 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         window.processInput(deltaTime);
         
         // Atualizar rotação do cubo
-        constexpr float rotationSpeed = 45.0f;  // 45 graus por segundo
-        glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-        rotation.y += rotationSpeed * deltaTime;
-        rotation.x += rotationSpeed * deltaTime * 0.5f;
-        cubeObj.SetObjectRotation(cubeObj.GetObjectRotation() + rotation);
-        //cube.render(shader, camera.getViewMatrix(), camera.getProjectionMatrix(window.getWidth() / window.getHeight()));
-
-        // Movimenta a sphere pro lado
-        constexpr float movementAmplitude = 0.5f;
-        constexpr float movementFrequency = 1.0f;
-
-        const float offsetX = movementAmplitude * sinf(2.0f * MathConstants::PI * movementFrequency * currentTime);
-        
-        glm::vec3 newPosition = glm::vec3(0.0f, offsetX, 1.0f);
-        cubeObj.SetObjectPosition(newPosition);
+        // constexpr float rotationSpeed = 45.0f;  // 45 graus por segundo
+        // glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+        // rotation.y += rotationSpeed * deltaTime;
+        // rotation.x += rotationSpeed * deltaTime * 0.5f;
+        // cubeObj->SetObjectRotation(cubeObj->GetObjectRotation() + rotation);
+        //
+        // // Movimenta a sphere pro lado
+        // constexpr float movementAmplitude = 0.5f;
+        // constexpr float movementFrequency = 1.0f;
+        //
+        // const float offsetX = movementAmplitude * sinf(MathConstants::PI * 2.0f * movementFrequency * currentTime);
+        //
+        // glm::vec3 newPosition = glm::vec3(0.0f, offsetX, 1.0f);
+        // cubeObj->SetObjectPosition(newPosition);
 
         // Sphere Scale
-        constexpr float scaleAmplitude = 0.5f;
-        constexpr float scaleFrequency = 0.25f;
-
-        const float scaleOffSet = scaleAmplitude * sinf(2.0f * MathConstants::PI * scaleFrequency * currentTime);
-        glm::vec3 newScale = originalScale + glm::vec3(scaleOffSet);
-        cubeObj.SetObjectScale(newScale);
+        // constexpr float scaleAmplitude = 0.5f;
+        // constexpr float scaleFrequency = 0.25f;
+        //
+        // const float scaleOffSet = scaleAmplitude * sinf(2.0f * MathConstants::PI * scaleFrequency * currentTime);
+        // glm::vec3 newScale = originalScale + glm::vec3(scaleOffSet);
+        // cubeObj.SetObjectScale(newScale);
         
         switch (viewMode)
         {
@@ -148,7 +143,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         }
         
         // Atualizar janela e Renderizar
-        renderer.renderFrame(camera, cubeObj, deltaTime);
+        renderer.renderFrame(camera, scene, deltaTime);
         numOfFramesRenderedInLastSecond++;
         
         // Mostrar o FPS na tela

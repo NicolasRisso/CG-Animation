@@ -35,3 +35,20 @@ void SceneObject::Draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 {
     m_Mesh->render(viewMatrix, projectionMatrix, m_Transform.getModelMatrix(), lights, cameraPosition);
 }
+
+void SceneObject::AddComponent(std::unique_ptr<IComponent> component)
+{
+    component->SetOwner(this);
+    component->Start();
+    m_Components.push_back(std::move(component));
+}
+
+void SceneObject::Start() const
+{
+    for (const auto& component : m_Components) component->Start();
+}
+
+void SceneObject::Tick(const float DeltaTime) const
+{
+    for (const auto& component : m_Components) component->Tick(DeltaTime);
+}

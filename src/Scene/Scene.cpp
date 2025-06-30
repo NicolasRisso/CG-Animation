@@ -1,8 +1,18 @@
 #include "Scene/Scene.h"
 
-bool Scene::AddObjectToScene(SceneObject object)
+void Scene::StartAll()
 {
-    auto [iterator, result] = m_Objects.emplace(std::move(object.GetName()), std::move(object));
+    for (auto& [name, object] : m_Objects) object->Start();
+}
+
+void Scene::TickAll(const float DeltaTime)
+{
+    for (auto& [name, object] : m_Objects) object->Tick(DeltaTime);
+}
+
+bool Scene::AddObjectToScene(std::unique_ptr<SceneObject> object)
+{
+    auto [iterator, result] = m_Objects.emplace(object->GetName(), std::move(object));
     return result;
 }
 
@@ -22,14 +32,14 @@ bool Scene::RemoveObjectFromSceneByName(const std::string& name)
 
 SceneObject* Scene::GetObjectFromScene(const std::string& name)
 {
-    auto iterator = m_Objects.find(name);
-    return iterator != m_Objects.end() ? &iterator->second : nullptr;
+    const auto iterator = m_Objects.find(name);
+    return iterator != m_Objects.end() ? iterator->second.get() : nullptr;
 }
 
-std::vector<SceneObject> Scene::GetObjectsFromScene() const
+std::vector<SceneObject*> Scene::GetObjectsFromScene() const
 {
-    std::vector<SceneObject> result;
+    std::vector<SceneObject*> result;
     result.reserve(m_Objects.size());
-    for (auto& [key, object] : m_Objects) result.push_back(object);
+    for (const auto& [key, object] : m_Objects) result.push_back(object.get());
     return result;
 }

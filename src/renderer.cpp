@@ -42,7 +42,7 @@ bool Renderer::initialize()
     return true;
 }
 
-void Renderer::renderFrame(const Camera& camera, SceneObject& object, const float deltaTime)
+void Renderer::renderFrame(const Camera& camera, const Scene& scene, const float deltaTime)
 {
     // Limpar buffer
     m_window.clear(0.05f, 0.05f, 0.05f, 1.0f);
@@ -50,7 +50,9 @@ void Renderer::renderFrame(const Camera& camera, SceneObject& object, const floa
     // Atualizar posições das luzes
     updateLights(deltaTime);
 
-    object.Draw(camera.getViewMatrix(), camera.getProjectionMatrix(m_window.getAspectRatio()), camera.getPosition(), m_lights);
+    const std::vector<SceneObject*> sceneObjects = scene.GetObjectsFromScene();
+    for (const SceneObject* object : sceneObjects)
+        object->Draw(camera.getViewMatrix(), camera.getProjectionMatrix(m_window.getAspectRatio()), camera.getPosition(), m_lights);
     
     m_window.update();
 }

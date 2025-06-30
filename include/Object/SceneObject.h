@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "Components/IComponent.h"
 #include "Core/Material.h"
 #include "Core/Transform.h"
 #include "Meshes/Mesh.h"
@@ -15,6 +16,13 @@ public:
     SceneObject(const std::string& name, Transform transform, Mesh* mesh, const Material& material);
 
     void Draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec3& cameraPosition, const std::vector<Light>& lights) const;
+
+    // Components Logic
+    void AddComponent(std::unique_ptr<IComponent> component);
+
+    // Behaviour Logic
+    void Start() const;
+    void Tick(const float DeltaTime) const;
 
     // Name Getters and Setters
     [[nodiscard]] std::string GetName() const { return m_Name; }
@@ -43,4 +51,6 @@ private:
     
     Transform m_Transform;
     std::unique_ptr<Mesh> m_Mesh;
+
+    std::vector<std::unique_ptr<IComponent>> m_Components;
 };
