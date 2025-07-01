@@ -2,15 +2,15 @@
 #include "Object/Meshes/CSGImplementable.h"
 #include "Object/Meshes/Mesh.h"
 
-class LetterOMesh : public Mesh, protected CSGImplementable
+class LetterEMesh : public Mesh, protected CSGImplementable
 {
 public:
-    LetterOMesh() = default;
-    ~LetterOMesh() override = default;
+    LetterEMesh() = default;
+    ~LetterEMesh() override = default;
 
 protected:
     void setupMesh(std::vector<float>& vertices, std::vector<unsigned int>& indices) override;
 
 private:
-    float LetterOWithSDF(const glm::vec3& p);
+    float LetterEWithSDF(const glm::vec3& p);
 };
