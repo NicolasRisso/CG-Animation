@@ -50,7 +50,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     cubeObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
     auto cubeObj1 = std::make_unique<CubeObject>(Transform(1.0f, 0.0f, 0.0f), Material());
 
-    auto letterObj = std::make_unique<AnyLetterObject>('O', Transform(2.0f, 0.0f, 0.0f), Material());
+    auto letterObj = std::make_unique<AnyLetterObject>('E', Transform(2.0f, 0.0f, 0.0f), Material());
     letterObj->SetObjectScale(glm::vec3(1.0f, 1.25f, 1.0f));
     letterObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(0.f, 90.f, 0.f)));
 

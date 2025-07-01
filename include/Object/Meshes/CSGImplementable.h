@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <glm/glm.hpp>
 #include <glm/geometric.hpp>
 #include <algorithm>
@@ -37,6 +38,11 @@ protected:
         return glm::length(pa - ba * h) - r;
     }
 
+    static float boxSDF(const glm::vec3& p, const glm::vec3& b) {
+        const glm::vec3 d = glm::abs(p) - b;
+        return glm::length(glm::max(d, 0.0f)) + std::min(std::max({d.x, d.y, d.z}), 0.0f);
+    }
+    
     static void RecalculateUVs(const glm::vec3 minCorner, const glm::vec3 maxCorner, std::vector<float>& vertices)
     {
         for(size_t i = 0; i < vertices.size(); i += 8)
