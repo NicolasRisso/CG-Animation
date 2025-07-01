@@ -33,17 +33,30 @@ protected:
         return glm::length(glm::max(d, 0.0f)) + std::min(std::max({d.x, d.y, d.z}), 0.0f);
     }
 
-    static float rightTrianglePrismSDF(const glm::vec3& p, const float legX, const float legY, const float depth)
+    static float rightTrianglePrismSDF(const glm::vec3& p, const glm::vec2& baseXZ, const float heightY )
     {
-        const float dz = fabs(p.z) - depth*0.5f;
-        
-        const float d1 = -p.x;
-        const float d2 = -p.y;
-        const float d3 = p.y + (legY/legX)*p.x - legY;
+        float halfY = heightY * 0.5f;
+        float dY    = fabs(p.y) - halfY;
 
-        const float d2D = std::max(std::max(d1, d2), d3);
-        
-        return std::max(d2D, dz);
+        // 2) Três half‐spaces do triângulo no plano XZ:
+
+        // (a) x >= 0  → dentro se -p.x <= 0
+        float d1 = -p.x;
+
+        // (b) z >= 0  → dentro se -p.z <= 0
+        float d2 = -p.z;
+
+        // (c) hipotenusa ligando (baseX,0) a (0,baseZ):
+        //     equação: z = −(baseZ/baseX) * x + baseZ
+        //     → dentro se p.z + (baseZ/baseX)*p.x − baseZ ≤ 0
+        float ratio = baseXZ.y / baseXZ.x;            // baseZ/baseX
+        float d3    = p.z + ratio * p.x - baseXZ.y;
+
+        // 3) SDF 2D do triângulo: interseção dos três half‐spaces
+        float d2D = std::max(std::max(d1, d2), d3);
+
+        // 4) Combina 2D + extrusão em Y (CSG intersection = max)
+        return std::max(d2D, dY);
     }
     
     static float cylinderSDF(const glm::vec3& p, const glm::vec3& a, const glm::vec3& b, const float r)
