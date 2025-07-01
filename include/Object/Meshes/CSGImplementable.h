@@ -107,6 +107,47 @@ protected:
         return outside + inside;
     }
 
+    static float cappedCylinderSDF(const glm::vec3& p, const glm::vec3& a, const glm::vec3& b, const float r)
+    {
+        // vetor de A→B
+        glm::vec3 ba = b - a;
+        float    len = glm::length(ba);
+        glm::vec3 baN = ba / len;          // direção normalizada
+        glm::vec3 pa = p  - a;
+
+        // projeta p sobre o eixo do cilindro
+        float t = glm::dot(pa, baN);
+
+        // 1) distância radial ao eixo (cilindro infinito)
+        float dCyl = glm::length(pa - baN * t) - r;
+
+        // 2) distância aos end-caps planos: 
+        //    se t<0 estamos abaixo de A; se t>len acima de B
+        float dCap = std::max(t - len, -t);
+
+        // 3) combinação: interseção entre cilindro e meia-espaços dos planos
+        return std::max(dCyl, dCap);
+    }
+
+    static float quarterCylinderSDF(
+        const glm::vec3 &p,
+        const glm::vec3 &a,
+        const glm::vec3 &b,
+        float            r,
+        const glm::vec3 &n1, float off1,
+        const glm::vec3 &n2, float off2
+    ){
+        // 1) cilindro finito com tampas planas
+        float dCyl = cappedCylinderSDF(p, a, b, r);
+
+        // 2) dois cortes de meio-espaço
+        float h1   = planeSDF(p, n1, off1);   // dot(p,n1) ≤ off1
+        float h2   = planeSDF(p, n2, off2);   // dot(p,n2) ≤ off2
+
+        // 3) interseção: mantém apenas onde todos ≤ 0
+        return std::max(dCyl, std::max(h1, h2));
+    }
+    
     // 2) SDF do plano de corte oblíquo, extrudado em Z
     //    – o plano em XY tem normal n = normalize( ( heightY, -hx, 0 ) )
     //    – offset = dot(n, A), onde A = (hx, heightY, 0) é o ápice

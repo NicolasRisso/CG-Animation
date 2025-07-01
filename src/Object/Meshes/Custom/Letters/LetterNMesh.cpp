@@ -25,10 +25,10 @@ void LetterNMesh::setupMesh(std::vector<float>& vertices, std::vector<unsigned i
 
 float LetterNMesh::LetterNWithSDF(const glm::vec3& p)
 {
-    glm::mat4 CW_Rot = glm::rotate(glm::mat4(1.0f),glm::radians(90.0f),glm::vec3(0,0,1));
-    glm::mat4 CCW_Rot = glm::rotate(glm::mat4(1.0f),glm::radians(-90.0f),glm::vec3(0,0,1));
-    glm::vec3 CW_p = glm::vec3(CW_Rot * glm::vec4(p - glm::vec3(0.05f, 0.2f, 0.0f),1.0f));
-    glm::vec3 CCW_p = glm::vec3(CCW_Rot * glm::vec4(p + glm::vec3(0.05f, 0.2f, 0.0f),1.0f));
+    const glm::mat4 CW_Rot = glm::rotate(glm::mat4(1.0f),glm::radians(90.0f),glm::vec3(0,0,1));
+    const glm::mat4 CCW_Rot = glm::rotate(glm::mat4(1.0f),glm::radians(-90.0f),glm::vec3(0,0,1));
+    const glm::vec3 CW_p = glm::vec3(CW_Rot * glm::vec4(p - glm::vec3(0.05f, 0.2f, 0.0f),1.0f));
+    const glm::vec3 CCW_p = glm::vec3(CCW_Rot * glm::vec4(p + glm::vec3(0.05f, 0.2f, 0.0f),1.0f));
     
     constexpr float height = 1.2f;
     const float body = boxSDF(p, glm::vec3(0.5f, height*0.5f, 0.1f));

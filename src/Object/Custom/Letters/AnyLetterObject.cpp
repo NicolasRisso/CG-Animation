@@ -6,6 +6,7 @@
 #include "Object/Meshes/Custom/Letters/LetterHMesh.h"
 #include "Object/Meshes/Custom/Letters/LetterNMesh.h"
 #include "Object/Meshes/Custom/Letters/LetterOMesh.h"
+#include "Object/Meshes/Custom/Letters/LetterSMesh.h"
 
 AnyLetterObject::AnyLetterObject(const char letter)
     : AnyLetterObject(letter, Transform(), Material()) {}
@@ -23,6 +24,7 @@ AnyLetterObject::AnyLetterObject(const char letter, const Transform& transform, 
         case 'H': letterMesh = new LetterHMesh(); break;
         case 'N': letterMesh = new LetterNMesh(); break;
         case 'O': letterMesh = new LetterOMesh(); break;
+        case 'S': letterMesh = new LetterSMesh(); break;
         default: letterMesh = new LetterCMesh(); break;
     }
     
