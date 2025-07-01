@@ -33,6 +33,40 @@ protected:
         return glm::length(glm::max(d, 0.0f)) + std::min(std::max({d.x, d.y, d.z}), 0.0f);
     }
 
+    static float rotatedRightTriangleSDF(
+    const glm::vec3& p, const glm::vec2& baseXZ, const float heightY, const float angleDeg = 0.0f)
+    {
+        // —————— 1) rotaciona o triângulo no plano XZ ——————
+        float a = glm::radians(angleDeg);
+        float ca = std::cos(a), sa = std::sin(a);
+        // gira (x,z) → ( x·cos – z·sin, x·sin + z·cos )
+        glm::vec3 q = p;
+        q.x = p.x * ca - p.z * sa;
+        q.z = p.x * sa + p.z * ca;
+        // q.y = p.y fica igual
+
+        // —————— 2) limita em Y (depth) ——————
+        float halfY = heightY * 0.5f;
+        float dY    = std::fabs(q.y) - halfY;           // dentro se |y| ≤ halfY
+
+        // —————— 3) half‐spaces do triângulo no plano XZ ——————
+        // (a) x ≥ 0  → d1 = –x
+        float d1 = -q.x;
+        // (b) z ≥ 0  → d2 = –z
+        float d2 = -q.z;
+        // (c) hipotenusa ligando (baseX,0) a (0,baseZ):
+        //     z ≤ –(baseZ/baseX)*x + baseZ
+        //     → d3 = z + (baseZ/baseX)*x – baseZ
+        float slope = baseXZ.y / baseXZ.x;
+        float d3    = q.z + slope * q.x - baseXZ.y;
+
+        // SDF 2D do triângulo = intersecção dos três half‐spaces
+        float d2D = std::max(std::max(d1, d2), d3);
+
+        // —————— 4) interseção triângulo ∩ extrusão Y ——————
+        return std::max(d2D, dY);
+    }
+
     static float rightTrianglePrismSDF(const glm::vec3& p, const glm::vec2& baseXZ, const float heightY )
     {
         float halfY = heightY * 0.5f;
@@ -57,6 +91,40 @@ protected:
 
         // 4) Combina 2D + extrusão em Y (CSG intersection = max)
         return std::max(d2D, dY);
+    }
+
+    static float boxExtrudedSDF(const glm::vec3& p,
+                           float hx, float hz, float heightY)
+    {
+        // move p para o “primeiro octante” (espelha X e Z)
+        glm::vec3 q(fabs(p.x), p.y, fabs(p.z));
+        glm::vec3 b(hx, heightY, hz);
+
+        glm::vec3 d = q - b;
+        float outside = glm::length(glm::max(d, glm::vec3(0.0f)));
+        float inside  = std::min(std::max(d.x, std::max(d.y, d.z)), 0.0f);
+
+        return outside + inside;
+    }
+
+    // 2) SDF do plano de corte oblíquo, extrudado em Z
+    //    – o plano em XY tem normal n = normalize( ( heightY, -hx, 0 ) )
+    //    – offset = dot(n, A), onde A = (hx, heightY, 0) é o ápice
+    static float slopePlaneSDF(const glm::vec3& p, float hx, float heightY)
+    {
+        glm::vec3 n = glm::normalize(glm::vec3(heightY, -hx, 0.0f));
+        float c     = glm::dot(n, glm::vec3(hx, heightY, 0.0f));
+        // dentro do wedge quando n·p <= c
+        return glm::dot(n, p) - c;
+    }
+
+    // 3) o wedge é a interseção (CSG ∩) desses dois SDFs:
+    static float wedgeSDF(const glm::vec3& p, float hx, float hz, float heightY)
+    {
+        float dBox   = boxExtrudedSDF(p, hx, hz, heightY);
+        float dPlane = slopePlaneSDF(p, hx, heightY);
+        // intersection = max(box, plane)
+        return std::max(dBox, dPlane);
     }
     
     static float cylinderSDF(const glm::vec3& p, const glm::vec3& a, const glm::vec3& b, const float r)
