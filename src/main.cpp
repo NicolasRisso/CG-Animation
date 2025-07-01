@@ -54,6 +54,8 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
 
     auto letterCObj = std::make_unique<AnyLetterObject>('C', Transform(1.0f, 0.0f, 0.0f), Material());
     auto letterHObj = std::make_unique<AnyLetterObject>('H', Transform(2.0f, 0.0f, 0.0f), Material());
+
+    auto letterOObj = std::make_unique<AnyLetterObject>('O', Transform(2.0f, -1.5f, 0.0f), Material());
     //letterHObj->SetObjectScale(glm::vec3(1.0f, 1.25f, 1.0f));
     // letterObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(0.f, 90.f, 0.f)));
 
@@ -61,6 +63,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     scene.AddObjectToScene(std::move(letterEObj));
     scene.AddObjectToScene(std::move(letterCObj));
     scene.AddObjectToScene(std::move(letterHObj));
+    scene.AddObjectToScene(std::move(letterOObj));
     
     // Variáveis para controle de tempo
     float lastFrameTime = 0.0f;

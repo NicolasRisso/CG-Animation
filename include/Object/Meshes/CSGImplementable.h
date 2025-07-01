@@ -27,6 +27,11 @@ protected:
         return glm::dot(p, n) - offset;
     }
 
+    static float boxSDF(const glm::vec3& p, const glm::vec3& b) {
+        const glm::vec3 d = glm::abs(p) - b;
+        return glm::length(glm::max(d, 0.0f)) + std::min(std::max({d.x, d.y, d.z}), 0.0f);
+    }
+    
     static float cylinderSDF(const glm::vec3& p,
                       const glm::vec3& a,
                       const glm::vec3& b,
@@ -38,9 +43,19 @@ protected:
         return glm::length(pa - ba * h) - r;
     }
 
-    static float boxSDF(const glm::vec3& p, const glm::vec3& b) {
-        const glm::vec3 d = glm::abs(p) - b;
-        return glm::length(glm::max(d, 0.0f)) + std::min(std::max({d.x, d.y, d.z}), 0.0f);
+    static float ellipticalCylinderSDF(const glm::vec3& p, const float rx, const float ry)
+    {
+        const float d = sqrt((p.x* p.x)/(rx*rx) + (p.y*p.y)/(ry*ry)) - 1.0f;
+        return d;
+    }
+
+    static float cappedEllipticalCylinderSDF(const glm::vec3& p,
+                                         const float rx, const float ry,
+                                         const float depth)
+    {
+        const float d1 = sqrt((p.x*p.x)/(rx*rx) + (p.y*p.y)/(ry*ry)) - 1.0f;
+        const float d2 = fabs(p.z) - depth*0.5f;
+        return std::max(d1, d2);
     }
     
     static void RecalculateUVs(const glm::vec3 minCorner, const glm::vec3 maxCorner, std::vector<float>& vertices)
