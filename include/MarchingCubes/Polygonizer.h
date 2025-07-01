@@ -11,6 +11,7 @@ namespace Polygonizer
         const glm::vec3& maxCorner,
         int resolution,
         std::vector<float>& outVerts,
-        std::vector<unsigned int>& outIdx
+        std::vector<unsigned int>& outIdx,
+        bool invertFaceSide = false
     );    
 }

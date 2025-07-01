@@ -10,8 +10,8 @@ static glm::vec3 vertexInterp(const glm::vec3& p1, const glm::vec3& p2, float v1
     return p1 + t * (p2 - p1);
 }
 
-void Polygonizer::PolygonizeSurface(const std::function<float(const glm::vec3&)>& sdf, const glm::vec3& minCorner,
-                                    const glm::vec3& maxCorner, int resolution, std::vector<float>& outVerts, std::vector<unsigned int>& outIdx)
+void Polygonizer::PolygonizeSurface(const std::function<float(const glm::vec3&)>& sdf, const glm::vec3& minCorner, const glm::vec3& maxCorner,
+    int resolution, std::vector<float>& outVerts, std::vector<unsigned int>& outIdx, bool invertFaceSide)
 {
     glm::vec3 size = maxCorner - minCorner;
     float dx = size.x / float(resolution);
@@ -91,6 +91,7 @@ void Polygonizer::PolygonizeSurface(const std::function<float(const glm::vec3&)>
                             sdf(v + glm::vec3(0,eps,0)) - sdf(v - glm::vec3(0,eps,0)),
                             sdf(v + glm::vec3(0,0,eps)) - sdf(v - glm::vec3(0,0,eps))
                         ));
+                        
                         // push: pos(xyz), normal(xyz), UV(0,0)
                         outVerts.insert(outVerts.end(), {
                             v.x, v.y, v.z,
@@ -98,7 +99,10 @@ void Polygonizer::PolygonizeSurface(const std::function<float(const glm::vec3&)>
                             0.0f, 0.0f
                         });
                     }
-                    outIdx.insert(outIdx.end(), { base, base+1, base+2 });
+                    if (invertFaceSide)
+                        outIdx.insert(outIdx.end(), { base, base+1, base+2 });
+                    else
+                        outIdx.insert(outIdx.end(), { base, base+2, base+1 });
                 }
             }
         }
