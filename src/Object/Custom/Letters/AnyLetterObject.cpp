@@ -1,5 +1,6 @@
 #include "Object/Custom/Letters/AnyLetterObject.h"
 
+#include "Object/Meshes/Custom/Letters/LetterAMesh.h"
 #include "Object/Meshes/Custom/Letters/LetterCMesh.h"
 #include "Object/Meshes/Custom/Letters/LetterEMesh.h"
 #include "Object/Meshes/Custom/Letters/LetterHMesh.h"
@@ -11,10 +12,11 @@ AnyLetterObject::AnyLetterObject(const char letter)
 AnyLetterObject::AnyLetterObject(const char letter, const Transform& transform, const Material& material)
 : SceneObject(transform, [&]()
 {
-    char c = static_cast<char>(std::toupper(letter));
+    const char c = static_cast<char>(std::toupper(letter));
     Mesh* letterMesh = nullptr;
     switch (c)
     {
+        case 'A': letterMesh = new LetterAMesh(); break;
         case 'C': letterMesh = new LetterCMesh(); break;
         case 'E': letterMesh = new LetterEMesh(); break;
         case 'H': letterMesh = new LetterHMesh(); break;

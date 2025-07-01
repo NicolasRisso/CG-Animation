@@ -17,7 +17,6 @@
 #include "Object/Components/Custom/RotationComponent.h"
 #include "Object/Custom/SphereObject.h"
 #include "Object/Custom/CubeObject.h" // Adicionada inclusão para CubeObject
-#include "Object/Custom/Letters/LetterAObject.h"
 #include "Object/Custom/Letters/AnyLetterObject.h"
 #include "Object/Meshes/Custom/Sphere.h"
 #include "Utility/Constants/MathConsts.h"
@@ -50,10 +49,10 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     // cubeObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
     // auto cubeObj1 = std::make_unique<CubeObject>(Transform(1.0f, 0.0f, 0.0f), Material());
 
-    auto letterEObj = std::make_unique<AnyLetterObject>('E', Transform(-1.0f, 0.0f, 0.0f), Material());
-
-    auto letterCObj = std::make_unique<AnyLetterObject>('C', Transform(1.0f, 0.0f, 0.0f), Material());
-    auto letterHObj = std::make_unique<AnyLetterObject>('H', Transform(2.0f, 0.0f, 0.0f), Material());
+    auto letterEObj = std::make_unique<AnyLetterObject>('E', Transform(-1.1f, 0.0f, 0.0f), Material());
+    auto letterAObj = std::make_unique<AnyLetterObject>('A', Transform(0.0f, 0.0f, 0.0f), Material());
+    auto letterCObj = std::make_unique<AnyLetterObject>('C', Transform(1.15f, 0.0f, 0.0f), Material());
+    auto letterHObj = std::make_unique<AnyLetterObject>('H', Transform(2.1f, 0.0f, 0.0f), Material());
 
     auto letterOObj = std::make_unique<AnyLetterObject>('O', Transform(2.0f, -1.5f, 0.0f), Material());
     //letterHObj->SetObjectScale(glm::vec3(1.0f, 1.25f, 1.0f));
@@ -61,6 +60,7 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
 
     Scene scene;
     scene.AddObjectToScene(std::move(letterEObj));
+    scene.AddObjectToScene(std::move(letterAObj));
     scene.AddObjectToScene(std::move(letterCObj));
     scene.AddObjectToScene(std::move(letterHObj));
     scene.AddObjectToScene(std::move(letterOObj));
