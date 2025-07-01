@@ -24,8 +24,8 @@ void LetterCMesh::setupMesh(std::vector<float>& vertices, std::vector<unsigned i
 float LetterCMesh::LetterCWithSDF(const glm::vec3& p)
 {
     // 1) Cilindro maior e interno
-    float outer = cylinderSDF(p, {0,0,-0.3f}, {0,0, 0.3f}, 1.0f);
-    float inner = cylinderSDF(p, {0,0,-0.3f}, {0,0, 0.3f}, 0.7f);
+    float outer = cylinderSDF(p, {0,0,-0.3f}, {0,0, 0.3f}, 0.65f);
+    float inner = cylinderSDF(p, {0,0,-0.3f}, {0,0, 0.3f}, 0.45f);
     float ring  = opSubtract(outer, inner);
 
     // 2) Plano de corte vertical (X = cutX) — mantém p.x ≤ cutX

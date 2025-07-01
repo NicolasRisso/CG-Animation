@@ -44,21 +44,23 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
     
     // Inicializar SceneObjects
-    auto sphereObj = std::make_unique<SphereObject>(128, 32, 0.5f, Transform(-1.0f, 0.0f, 0.0f), Material());
-    
-    auto cubeObj = std::make_unique<CubeObject>(Transform(0.0f, 0.0f, 0.0f), Material());
-    cubeObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
-    auto cubeObj1 = std::make_unique<CubeObject>(Transform(1.0f, 0.0f, 0.0f), Material());
+    // auto sphereObj = std::make_unique<SphereObject>(128, 32, 0.5f, Transform(-1.0f, 0.0f, 0.0f), Material());
+    //
+    // auto cubeObj = std::make_unique<CubeObject>(Transform(0.0f, 0.0f, 0.0f), Material());
+    // cubeObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
+    // auto cubeObj1 = std::make_unique<CubeObject>(Transform(1.0f, 0.0f, 0.0f), Material());
 
-    auto letterObj = std::make_unique<AnyLetterObject>('E', Transform(2.0f, 0.0f, 0.0f), Material());
-    letterObj->SetObjectScale(glm::vec3(1.0f, 1.25f, 1.0f));
-    letterObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(0.f, 90.f, 0.f)));
+    auto letterEObj = std::make_unique<AnyLetterObject>('E', Transform(-1.0f, 0.0f, 0.0f), Material());
+
+    auto letterCObj = std::make_unique<AnyLetterObject>('C', Transform(1.0f, 0.0f, 0.0f), Material());
+    auto letterHObj = std::make_unique<AnyLetterObject>('H', Transform(2.0f, 0.0f, 0.0f), Material());
+    //letterHObj->SetObjectScale(glm::vec3(1.0f, 1.25f, 1.0f));
+    // letterObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(0.f, 90.f, 0.f)));
 
     Scene scene;
-    scene.AddObjectToScene(std::move(cubeObj));
-    scene.AddObjectToScene(std::move(cubeObj1));
-    scene.AddObjectToScene(std::move(sphereObj));
-    scene.AddObjectToScene(std::move(letterObj));
+    scene.AddObjectToScene(std::move(letterEObj));
+    scene.AddObjectToScene(std::move(letterCObj));
+    scene.AddObjectToScene(std::move(letterHObj));
     
     // Variáveis para controle de tempo
     float lastFrameTime = 0.0f;
