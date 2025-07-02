@@ -4,8 +4,8 @@
 #include <string>
 
 // Constantes padrão
-const int DEFAULT_WIDTH = 1280;
-const int DEFAULT_HEIGHT = 720;
+const int DEFAULT_WIDTH = 1920;
+const int DEFAULT_HEIGHT = 1080;
 const int TOTAL_FRAMES = 180;  // 3 segundos a 60 FPS
 const std::string OUTPUT_DIR = "./output";
 

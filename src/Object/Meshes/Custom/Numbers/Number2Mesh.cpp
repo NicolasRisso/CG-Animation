@@ -59,7 +59,7 @@ float Number2Mesh::Number2WithSDF(const glm::vec3& p)
     const glm::vec3 offset2Box{0, 0.57f, 0.0f};
     
     const float removeBox = boxSDF(p + offset2Box, glm::vec3(1.0f, 0.225f, 0.2f));
-    const float addBox = boxSDF(p + offset2Box - glm::vec3(0.0f, 0.125f, 0.0f), glm::vec3(0.45f, 0.225f * 0.5f, 0.1f));
+    const float addBox = boxSDF(p + offset2Box - glm::vec3(0.0f, 0.125f, 0.0f), glm::vec3(0.45f, 0.225f * 0.5f, 0.2f));
 
     return opUnion(opSubtract(S, removeBox), addBox);
 }
