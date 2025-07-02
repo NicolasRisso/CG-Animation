@@ -45,7 +45,7 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     
     // Inicializar câmera
     Camera camera(glm::vec3(0.0f, 1.0f, 0.0f));
-    camera.SetObjectPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+    camera.SetObjectPosition(glm::vec3(0.5f, 0.0f, 10.0f));
 
     // EACH
     auto letterEObj = std::make_unique<AnyLetterObject>('E', Transform(-1.1f, 0.0f, 0.0f), Material());
