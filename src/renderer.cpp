@@ -63,24 +63,6 @@ void Renderer::renderFrame(const Camera& camera, const Scene& scene, const float
         object->Draw(camera.getViewMatrix(), camera.getProjectionMatrix(m_window.getAspectRatio()), camera.getPosition(), m_lights);
     
     m_window.update();
-
-    // capture frame pixels
-    if (m_bIsRecording)
-    {
-        glReadBuffer(GL_FRONT);
-        
-        int w = m_window.getWidth(), h = m_window.getHeight();
-        auto pixels = std::make_shared<std::vector<unsigned char>>(w*h*4);
-        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels->data());
-        // queue file write
-        std::ostringstream ss;
-        ss << m_recordFolder << "/frame_" << std::setw(5) << std::setfill('0') << m_recordFrameCount++ << ".png";
-        {
-            std::lock_guard<std::mutex> lk(g_queueMutex);
-            g_saveQueue.emplace(pixels, ss.str());
-        }
-        g_queueCV.notify_one();
-    }
 }
 
 bool Renderer::saveFrameToImage(const std::string& outputPath, const int frameNumber)
@@ -178,27 +160,6 @@ void Renderer::setLightPosition(const int lightIndex, const glm::vec3& position)
     {
         m_lights[lightIndex].position = position;
     }
-}
-
-void Renderer::combineFramesToVideo(const std::string& outputPath)
-{
-    std::ostringstream cmd;
-    cmd << "ffmpeg -y"
-        << " -framerate " << m_recordFPS
-        << " -i " << m_recordFolder << "/frame_%05d.png"
-        << " -c:v libx264 -pix_fmt yuv420p"
-        << " " << outputPath;
-    std::cout << "Executing: " << cmd.str() << std::endl;
-    std::system(cmd.str().c_str());
-}
-
-void Renderer::startRecording(const std::string& folder, int fps)
-{
-    m_recordFolder = folder;
-    m_recordFPS    = fps;
-    m_recordFrameCount = 0;
-    m_bIsRecording = true;
-    std::filesystem::create_directories(folder);
 }
 
 void Renderer::setupLights()

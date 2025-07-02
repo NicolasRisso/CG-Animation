@@ -25,32 +25,6 @@
 #include "Object/Meshes/Custom/Sphere.h"
 #include "Utility/Constants/MathConsts.h"
 
-// Shared save queue for frames
-std::queue<std::pair<std::shared_ptr<std::vector<unsigned char>>, std::string>> g_saveQueue;
-std::mutex                                     g_queueMutex;
-std::condition_variable                        g_queueCV;
-static bool                                           g_savingActive = false;
-static std::thread                                    g_saverThread;
-
-// Worker that writes PNGs in background
-void SaveWorker(const int width, const int height) {
-    while (g_savingActive || !g_saveQueue.empty()) {
-        std::unique_lock<std::mutex> lk(g_queueMutex);
-        g_queueCV.wait(lk, []{
-            return !g_savingActive || !g_saveQueue.empty();
-        });
-        while (!g_saveQueue.empty()) {
-            auto [pixels, filename] = std::move(g_saveQueue.front());
-            g_saveQueue.pop();
-            lk.unlock();
-            stbi_write_png(
-                filename.c_str(), width, height, 4,
-                pixels->data(), width * 4);
-            lk.lock();
-        }
-    }
-}
-
 bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode viewMode) {
     // Criar diretório de saída se não existir
     std::filesystem::create_directories(outputDir);
@@ -71,13 +45,6 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     
     // Inicializar câmera
     Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
-    
-    // Inicializar SceneObjects
-    // auto sphereObj = std::make_unique<SphereObject>(128, 32, 0.5f, Transform(-1.0f, 0.0f, 0.0f), Material());
-    //
-    // auto cubeObj = std::make_unique<CubeObject>(Transform(0.0f, 0.0f, 0.0f), Material());
-    // cubeObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
-    // auto cubeObj1 = std::make_unique<CubeObject>(Transform(1.0f, 0.0f, 0.0f), Material());
 
     // EACH
     auto letterEObj = std::make_unique<AnyLetterObject>('E', Transform(-1.1f, 0.0f, 0.0f), Material());
@@ -130,16 +97,6 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
 
     double startTime = glfwGetTime();
 
-    renderer.startRecording("captures/", 30);
-
-    if (viewMode == ViewMode::RENDER_ONLY)
-    {
-        // start background saver
-        g_savingActive = true;
-        g_saverThread  = std::thread(SaveWorker, window.getWidth(), window.getHeight());
-        renderer.startRecording(outputDir, 30);
-    }
-
     // Loop principal
     while (!window.shouldClose())
     {
@@ -177,15 +134,6 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
             std::cout << "\rFPS: " << numOfFramesRenderedInLastSecond << std::flush;
             numOfFramesRenderedInLastSecond = 0;
             lastTimeShowedFPS = currentTime;
-        }
-        
-        if (viewMode == ViewMode::RENDER_ONLY && frameIndex++ >= totalFrames)
-        {
-            // shutdown saver
-            g_saverThread.join();
-            std::string videoPath = outputDir + "/animation.mp4";
-            renderer.combineFramesToVideo(videoPath);
-            break;
         }
     }
     

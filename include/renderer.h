@@ -65,19 +65,6 @@ public:
      */
     void setLightPosition(int lightIndex, const glm::vec3& position);
     
-    /**
-     * @brief Combina frames em um vídeo
-     * @param framesPath Caminho para os frames
-     * @param outputPath Caminho para o vídeo de saída
-     * @param frameCount Número total de frames
-     * @param fps Frames por segundo
-     * @return true se a combinação foi bem-sucedida, false caso contrário
-     */
-    void combineFramesToVideo(const std::string& outputPath);
-
-    /// Começa a captura: cria a pasta e reseta contadores
-    void startRecording(const std::string& folder, int fps = 30);
-    
 private:
     /** @brief Configura as luzes iniciais*/
     void setupLights();
@@ -88,11 +75,5 @@ private:
     float m_accumulateTime = 0.0f;
 
     std::vector<Light> m_lights;
-    
-    // Recording
-    int         m_recordFrameCount  = 0;
-    int         m_recordFPS         = 30;
-    std::string m_recordFolder;
-    bool        m_bIsRecording = false;
 };
 #endif
