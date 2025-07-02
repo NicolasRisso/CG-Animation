@@ -70,7 +70,7 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     letterNObj->SetObjectScale(glm::vec3(0.75f));
     auto letterOObj = std::make_unique<AnyLetterObject>('O', Transform(1.65f, -1.3f, 0.0f), Material());
     letterOObj->SetObjectScale(glm::vec3(0.9f, 1.0f, 1.0f) * 0.75f);
-    auto letterSObj = std::make_unique<AnyLetterObject>('S', Transform(2.25f, -1.3f, 0.0f), Material());
+    auto letterSObj = std::make_unique<AnyLetterObject>('S', Transform(2.25f, -1.3f, 0.0f), Material("textures/magma.png"));
     letterSObj->SetObjectScale(glm::vec3(0.8f, 0.8f, 1.0f) * 0.75f);
 
     // Animação
