@@ -4,14 +4,22 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <filesystem>
 #include <vector>
 #include <glm/gtc/type_ptr.hpp>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image/stb_image_write.h"
 
 #include "Light.h"
 #include "Object/SceneObject.h"
 #include "Utility/Constants/EngineLimits.h"
 
 // Implementação otimizada do Renderer
+
+extern std::queue<std::pair<std::shared_ptr<std::vector<unsigned char>>, std::string>> g_saveQueue;
+extern std::mutex                                     g_queueMutex;
+extern std::condition_variable                        g_queueCV;
 
 Renderer::Renderer(Window& window)
     : m_window(window)
@@ -55,42 +63,53 @@ void Renderer::renderFrame(const Camera& camera, const Scene& scene, const float
         object->Draw(camera.getViewMatrix(), camera.getProjectionMatrix(m_window.getAspectRatio()), camera.getPosition(), m_lights);
     
     m_window.update();
+
+    // capture frame pixels
+    if (m_bIsRecording)
+    {
+        glReadBuffer(GL_FRONT);
+        
+        int w = m_window.getWidth(), h = m_window.getHeight();
+        auto pixels = std::make_shared<std::vector<unsigned char>>(w*h*4);
+        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels->data());
+        // queue file write
+        std::ostringstream ss;
+        ss << m_recordFolder << "/frame_" << std::setw(5) << std::setfill('0') << m_recordFrameCount++ << ".png";
+        {
+            std::lock_guard<std::mutex> lk(g_queueMutex);
+            g_saveQueue.emplace(pixels, ss.str());
+        }
+        g_queueCV.notify_one();
+    }
 }
 
 bool Renderer::saveFrameToImage(const std::string& outputPath, const int frameNumber)
 {
-    // Usar monitor de performance para medir tempo de salvamento
-    static PerformanceMonitor perfMonitor;
-    perfMonitor.startOperation("frame_save");
-    
-    // Obter dimensões da janela
-    int width = m_window.getWidth();
+    int width  = m_window.getWidth();
     int height = m_window.getHeight();
-    
-    // Usar buffer otimizado para pixels
-    MemoryManager::Buffer<unsigned char> pixels(width * height * 4);
-    
-    // Ler pixels do framebuffer
-    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-    
-    // Criar nome do arquivo
-    std::stringstream ss;
-    ss << outputPath << "/frame_" << std::setw(5) << std::setfill('0') << frameNumber << ".png";
+    std::vector<unsigned char> pixels(width * height * 4);
+
+    glReadPixels(0, 0, width, height,
+                 GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+    // o stb_image_write escreve origin (0,0) em top-left se ativarmos:
+    stbi_flip_vertically_on_write(true);
+
+    std::ostringstream ss;
+    ss << outputPath
+       << "/frame_" << std::setw(5) << std::setfill('0')
+       << frameNumber << ".png";
     std::string filename = ss.str();
-    
-    // Salvar imagem usando stb_image_write (implementação será adicionada)
-    // Por enquanto, apenas simular o salvamento
-    std::cout << "Salvando frame " << frameNumber << " em " << filename << std::endl;
-    
-    // Registrar tempo de salvamento
-    double saveTime = perfMonitor.endOperation("frame_save");
-    
-    // A cada 60 frames, imprimir estatísticas de desempenho
-    if (frameNumber % 60 == 0) {
-        std::cout << "Frame " << frameNumber << " salvo em " 
-                  << saveTime << " ms" << std::endl;
+
+    // salva como PNG RGBA8
+    if (!stbi_write_png(filename.c_str(),
+                        width, height, 4,
+                        pixels.data(),
+                        width * 4))
+    {
+        std::cerr << "Erro ao salvar frame em " << filename << "\n";
+        return false;
     }
-    
     return true;
 }
 
@@ -161,23 +180,25 @@ void Renderer::setLightPosition(const int lightIndex, const glm::vec3& position)
     }
 }
 
-bool Renderer::combineFramesToVideo(const std::string& framesPath, const std::string& outputPath, 
-                                   int frameCount, int fps)
+void Renderer::combineFramesToVideo(const std::string& outputPath)
 {
-    // Usar monitor de performance para medir tempo de combinação
-    static PerformanceMonitor perfMonitor;
-    perfMonitor.startOperation("video_combine");
-    
-    // Esta função será implementada usando FFmpeg ou outra biblioteca
-    // Por enquanto, apenas simular a combinação
-    std::cout << "Combinando " << frameCount << " frames em " << outputPath 
-              << " com " << fps << " FPS" << std::endl;
-    
-    // Registrar tempo de combinação
-    double combineTime = perfMonitor.endOperation("video_combine");
-    std::cout << "Vídeo combinado em " << combineTime << " ms" << std::endl;
-    
-    return true;
+    std::ostringstream cmd;
+    cmd << "ffmpeg -y"
+        << " -framerate " << m_recordFPS
+        << " -i " << m_recordFolder << "/frame_%05d.png"
+        << " -c:v libx264 -pix_fmt yuv420p"
+        << " " << outputPath;
+    std::cout << "Executing: " << cmd.str() << std::endl;
+    std::system(cmd.str().c_str());
+}
+
+void Renderer::startRecording(const std::string& folder, int fps)
+{
+    m_recordFolder = folder;
+    m_recordFPS    = fps;
+    m_recordFrameCount = 0;
+    m_bIsRecording = true;
+    std::filesystem::create_directories(folder);
 }
 
 void Renderer::setupLights()

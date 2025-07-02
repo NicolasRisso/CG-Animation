@@ -16,6 +16,6 @@ enum class ViewMode {
 };
 
 // Função principal para renderização da animação
-bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode viewMode = ViewMode::RENDER_ONLY);
+bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode viewMode = ViewMode::RENDER_ONLY);
 
 #endif // MAIN_H

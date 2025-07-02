@@ -10,6 +10,9 @@
 #include <string>
 #include <iomanip>
 #include <filesystem>
+#include <mutex>
+#include <queue>
+#include <stb_image/stb_image_write.h>
 
 #include "window.h"
 #include "camera.h"
@@ -18,10 +21,37 @@
 #include "Object/Custom/SphereObject.h"
 #include "Object/Custom/CubeObject.h" // Adicionada inclusão para CubeObject
 #include "Object/Custom/Letters/AnyLetterObject.h"
+#include "Object/Custom/Numbers/AnyNumberObject.h"
 #include "Object/Meshes/Custom/Sphere.h"
 #include "Utility/Constants/MathConsts.h"
 
-bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode viewMode) {
+// Shared save queue for frames
+std::queue<std::pair<std::shared_ptr<std::vector<unsigned char>>, std::string>> g_saveQueue;
+std::mutex                                     g_queueMutex;
+std::condition_variable                        g_queueCV;
+static bool                                           g_savingActive = false;
+static std::thread                                    g_saverThread;
+
+// Worker that writes PNGs in background
+void SaveWorker(const int width, const int height) {
+    while (g_savingActive || !g_saveQueue.empty()) {
+        std::unique_lock<std::mutex> lk(g_queueMutex);
+        g_queueCV.wait(lk, []{
+            return !g_savingActive || !g_saveQueue.empty();
+        });
+        while (!g_saveQueue.empty()) {
+            auto [pixels, filename] = std::move(g_saveQueue.front());
+            g_saveQueue.pop();
+            lk.unlock();
+            stbi_write_png(
+                filename.c_str(), width, height, 4,
+                pixels->data(), width * 4);
+            lk.lock();
+        }
+    }
+}
+
+bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode viewMode) {
     // Criar diretório de saída se não existir
     std::filesystem::create_directories(outputDir);
     
@@ -49,23 +79,41 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     // cubeObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(90.f, 0.f, 0.f)));
     // auto cubeObj1 = std::make_unique<CubeObject>(Transform(1.0f, 0.0f, 0.0f), Material());
 
+    // EACH
     auto letterEObj = std::make_unique<AnyLetterObject>('E', Transform(-1.1f, 0.0f, 0.0f), Material());
+    letterEObj->SetObjectScale(glm::vec3(0.9f, 1.0f, 1.0f));
     auto letterAObj = std::make_unique<AnyLetterObject>('A', Transform(0.0f, 0.0f, 0.0f), Material());
     auto letterCObj = std::make_unique<AnyLetterObject>('C', Transform(1.15f, 0.0f, 0.0f), Material());
     auto letterHObj = std::make_unique<AnyLetterObject>('H', Transform(2.1f, 0.0f, 0.0f), Material());
+    letterHObj->SetObjectScale(glm::vec3(0.9f, 1.0f, 1.0f));
+
+    // 20
+    auto number2Obj = std::make_unique<AnyNumberObject>(2, Transform(-1.1f, -1.35f, 0.0f), Material());
+    number2Obj->SetObjectScale(glm::vec3(0.9f, 0.9f, 1.0f) * 0.7f);
+    number2Obj->SetObjectRotation(glm::vec3(0.0f, 180.0f, 0.0f));
+    auto number0Obj = std::make_unique<AnyLetterObject>('O', Transform(-0.5f, -1.3f, 0.0f), Material());
+    number0Obj->SetObjectScale(glm::vec3(0.7f, 1.0f, 1.0f) * 0.75f);
     
-    auto letterAObj2 = std::make_unique<AnyLetterObject>('A', Transform(-1.1f, -1.3f, 0.0f), Material());
-    auto letterNObj = std::make_unique<AnyLetterObject>('N', Transform(0.0f, -1.3f, 0.0f), Material());
-    auto letterOObj = std::make_unique<AnyLetterObject>('O', Transform(1.1f, -1.3f, 0.0f), Material());
-    letterOObj->SetObjectScale(glm::vec3(0.9f, 1.0f, 1.0f));
-    auto letterSObj = std::make_unique<AnyLetterObject>('S', Transform(2.1f, -1.3f, 0.0f), Material());
-    letterSObj->SetObjectScale(glm::vec3(0.8f, 0.8f, 1.0f));
+    // ANOS
+    auto letterAObj2 = std::make_unique<AnyLetterObject>('A', Transform(0.1f, -1.3f, 0.0f), Material());
+    letterAObj2->SetObjectScale(glm::vec3(0.75f));
+    auto letterNObj = std::make_unique<AnyLetterObject>('N', Transform(0.7f, -1.3f, 0.0f), Material());
+    letterNObj->SetObjectScale(glm::vec3(0.75f));
+    auto letterOObj = std::make_unique<AnyLetterObject>('O', Transform(1.3f, -1.3f, 0.0f), Material());
+    letterOObj->SetObjectScale(glm::vec3(0.9f, 1.0f, 1.0f) * 0.75f);
+    auto letterSObj = std::make_unique<AnyLetterObject>('S', Transform(1.9f, -1.3f, 0.0f), Material());
+    letterSObj->SetObjectScale(glm::vec3(0.8f, 0.8f, 1.0f) * 0.75f);
 
     Scene scene;
     scene.AddObjectToScene(std::move(letterEObj));
     scene.AddObjectToScene(std::move(letterAObj));
     scene.AddObjectToScene(std::move(letterCObj));
     scene.AddObjectToScene(std::move(letterHObj));
+
+    scene.AddObjectToScene(std::move(number2Obj));
+    scene.AddObjectToScene(std::move(number0Obj));
+    
+    scene.AddObjectToScene(std::move(letterAObj2));
     scene.AddObjectToScene(std::move(letterNObj));
     scene.AddObjectToScene(std::move(letterOObj));
     scene.AddObjectToScene(std::move(letterSObj));
@@ -79,7 +127,19 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     // To Show FPS
     double lastTimeShowedFPS = glfwGetTime();
     int numOfFramesRenderedInLastSecond = 0;
-    
+
+    double startTime = glfwGetTime();
+
+    renderer.startRecording("captures/", 30);
+
+    if (viewMode == ViewMode::RENDER_ONLY)
+    {
+        // start background saver
+        g_savingActive = true;
+        g_saverThread  = std::thread(SaveWorker, window.getWidth(), window.getHeight());
+        renderer.startRecording(outputDir, 30);
+    }
+
     // Loop principal
     while (!window.shouldClose())
     {
@@ -91,71 +151,10 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
         // Processar entrada do usuário
         window.processInput(deltaTime);
         
-        // Atualizar rotação do cubo
-        // constexpr float rotationSpeed = 45.0f;  // 45 graus por segundo
-        // glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-        // rotation.y += rotationSpeed * deltaTime;
-        // rotation.x += rotationSpeed * deltaTime * 0.5f;
-        // cubeObj->SetObjectRotation(cubeObj->GetObjectRotation() + rotation);
-        //
-        // // Movimenta a sphere pro lado
-        // constexpr float movementAmplitude = 0.5f;
-        // constexpr float movementFrequency = 1.0f;
-        //
-        // const float offsetX = movementAmplitude * sinf(MathConstants::PI * 2.0f * movementFrequency * currentTime);
-        //
-        // glm::vec3 newPosition = glm::vec3(0.0f, offsetX, 1.0f);
-        // cubeObj->SetObjectPosition(newPosition);
-
-        // Sphere Scale
-        // constexpr float scaleAmplitude = 0.5f;
-        // constexpr float scaleFrequency = 0.25f;
-        //
-        // const float scaleOffSet = scaleAmplitude * sinf(2.0f * MathConstants::PI * scaleFrequency * currentTime);
-        // glm::vec3 newScale = originalScale + glm::vec3(scaleOffSet);
-        // cubeObj.SetObjectScale(newScale);
-        
         switch (viewMode)
         {
         case ViewMode::RENDER_ONLY:
-            if (!renderingComplete && frameIndex < totalFrames)
-            {
-                // Salvar frame como imagem
-                if (viewMode == ViewMode::RENDER_ONLY)
-                {
-                    if (!renderer.saveFrameToImage(outputDir, frameIndex))
-                    {
-                        std::cerr << "Falha ao salvar frame " << frameIndex << std::endl;
-                        return false;
-                    }
-                    // Exibir progresso
-                    float progress = static_cast<float>(frameIndex + 1) / static_cast<float>(totalFrames) * 100.0f;
-                    std::cout << "Progresso: " << std::fixed << std::setprecision(1) << progress << "%" << std::endl;
-                }
-                frameIndex++;
-            }
-            // Verificar se a renderização foi concluída
-            else
-            {
-                renderingComplete = true;
-                
-                // Combinar frames em vídeo
-                std::string outputVideo = outputDir + "/animation.mp4";
-                if (!renderer.combineFramesToVideo(outputDir, outputVideo, totalFrames, 60)) {
-                    std::cerr << "Falha ao combinar frames em vídeo" << std::endl;
-                    return false;
-                }
-                
-                std::cout << "Animação renderizada com sucesso: " << outputVideo << std::endl;
-                
-                // No modo de renderização apenas, sair do loop
-                if (viewMode == ViewMode::RENDER_ONLY) {
-                    std::cout << "todos os frames renderizados, saindo do loop\n";
-                    break;
-                }
-                
-                std::cout << "Renderização concluída. Pressione ESC para sair ou continue interagindo com a visualização." << std::endl;
-            }
+            frameIndex++;
             break;
         case ViewMode::INTERACTIVE:
             frameIndex++;
@@ -178,6 +177,15 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
             std::cout << "\rFPS: " << numOfFramesRenderedInLastSecond << std::flush;
             numOfFramesRenderedInLastSecond = 0;
             lastTimeShowedFPS = currentTime;
+        }
+        
+        if (viewMode == ViewMode::RENDER_ONLY && frameIndex++ >= totalFrames)
+        {
+            // shutdown saver
+            g_saverThread.join();
+            std::string videoPath = outputDir + "/animation.mp4";
+            renderer.combineFramesToVideo(videoPath);
+            break;
         }
     }
     
@@ -232,7 +240,7 @@ int main(int argc, char* argv[]) {
     }
     
     // Renderizar animação
-    if (!renderAnimation(outputDir, frames, viewMode)) {
+    if (!RenderAnimation(outputDir, frames, viewMode)) {
         std::cerr << "Falha ao renderizar animação" << std::endl;
         return 1;
     }

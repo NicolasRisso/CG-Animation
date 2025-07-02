@@ -73,9 +73,11 @@ public:
      * @param fps Frames por segundo
      * @return true se a combinação foi bem-sucedida, false caso contrário
      */
-    bool combineFramesToVideo(const std::string& framesPath, const std::string& outputPath, 
-                             int frameCount, int fps);
+    void combineFramesToVideo(const std::string& outputPath);
 
+    /// Começa a captura: cria a pasta e reseta contadores
+    void startRecording(const std::string& folder, int fps = 30);
+    
 private:
     /** @brief Configura as luzes iniciais*/
     void setupLights();
@@ -87,5 +89,10 @@ private:
 
     std::vector<Light> m_lights;
     
+    // Recording
+    int         m_recordFrameCount  = 0;
+    int         m_recordFPS         = 30;
+    std::string m_recordFolder;
+    bool        m_bIsRecording = false;
 };
 #endif
