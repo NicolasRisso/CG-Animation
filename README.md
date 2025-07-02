@@ -67,7 +67,7 @@ Opções:
 - Iluminação dinâmica com luzes que mudam de cor e de posição
 - Operações Geométricas feitas por Composição (Adicione  componentes de animação á objetos de cena para animá-los)
 - Modelagem de formas por meio de Marching Cubes
-- Operação Boleana para Modelagem (Letras foram feitas assim)
+- Operação Boleana e Campo de Distância Assinado (SDF) para Modelagem (Letras foram feitas assim)
 
 ## Requisitos
 
