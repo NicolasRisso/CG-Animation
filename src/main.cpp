@@ -18,6 +18,7 @@
 #include "camera.h"
 #include "renderer.h"
 #include "Object/Components/Custom/RotationComponent.h"
+#include "Object/Components/Custom/SinWithOffsetYTranslationComponent.h"
 #include "Object/Custom/SphereObject.h"
 #include "Object/Custom/CubeObject.h" // Adicionada inclusão para CubeObject
 #include "Object/Custom/Letters/AnyLetterObject.h"
@@ -59,8 +60,8 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     auto number2Obj = std::make_unique<AnyNumberObject>(2, Transform(-1.25f, -1.4f, 0.0f), Material());
     number2Obj->SetObjectScale(glm::vec3(0.9f, 0.9f, 1.0f) * 0.75f);
     number2Obj->SetObjectRotation(glm::vec3(0.0f, 180.0f, 0.0f));
-    auto number0Obj = std::make_unique<AnyLetterObject>('O', Transform(-0.65f, -1.35f, 0.0f), Material());
-    number0Obj->SetObjectScale(glm::vec3(0.7f, 1.0f, 1.0f) * 0.75f);
+    auto number0Obj = std::make_unique<AnyLetterObject>('O', Transform(-0.6f, -1.35f, 0.0f), Material());
+    number0Obj->SetObjectScale(glm::vec3(0.8f, 1.0f, 1.0f) * 0.75f);
     
     // ANOS
     auto letterAObj2 = std::make_unique<AnyLetterObject>('A', Transform(0.15f, -1.3f, 0.0f), Material());
@@ -72,6 +73,30 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     auto letterSObj = std::make_unique<AnyLetterObject>('S', Transform(2.25f, -1.3f, 0.0f), Material());
     letterSObj->SetObjectScale(glm::vec3(0.8f, 0.8f, 1.0f) * 0.75f);
 
+    // Animação
+    std::vector<std::unique_ptr<SinWithOffsetYTranslationComponent>> sinMovementComps;
+    sinMovementComps.reserve(10);
+    for (int i = 0; i < 10; ++i) {
+        sinMovementComps.emplace_back(
+            std::make_unique<SinWithOffsetYTranslationComponent>(0.5f, 0.125f)
+        );
+    }
+    
+    letterEObj->AddComponent(std::move(sinMovementComps[0]));
+    letterAObj->AddComponent(std::move(sinMovementComps[1]));
+    letterCObj->AddComponent(std::move(sinMovementComps[2]));
+    letterHObj->AddComponent(std::move(sinMovementComps[3]));
+    
+    number2Obj->AddComponent(std::move(sinMovementComps[4]));
+    number0Obj->AddComponent(std::move(sinMovementComps[5]));
+    
+    letterAObj2->AddComponent(std::move(sinMovementComps[6]));
+    letterNObj->AddComponent(std::move(sinMovementComps[7]));
+    letterOObj->AddComponent(std::move(sinMovementComps[8]));
+    letterSObj->AddComponent(std::move(sinMovementComps[9]));
+
+    // Adicionar a Cena
+    
     Scene scene;
     scene.AddObjectToScene(std::move(letterEObj));
     scene.AddObjectToScene(std::move(letterAObj));
