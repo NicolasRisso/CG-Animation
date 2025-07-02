@@ -18,6 +18,7 @@
 #include "camera.h"
 #include "renderer.h"
 #include "Object/Components/Custom/RotationComponent.h"
+#include "Object/Components/Custom/SinWithOffsetXZTrnaslationComponent.h"
 #include "Object/Components/Custom/SinWithOffsetYTranslationComponent.h"
 #include "Object/Custom/SphereObject.h"
 #include "Object/Custom/CubeObject.h" // Adicionada inclusão para CubeObject
@@ -70,10 +71,14 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     letterNObj->SetObjectScale(glm::vec3(0.75f));
     auto letterOObj = std::make_unique<AnyLetterObject>('O', Transform(1.65f, -1.3f, 0.0f), Material());
     letterOObj->SetObjectScale(glm::vec3(0.9f, 1.0f, 1.0f) * 0.75f);
-    auto letterSObj = std::make_unique<AnyLetterObject>('S', Transform(2.25f, -1.3f, 0.0f), Material("textures/magma.png"));
+    auto letterSObj = std::make_unique<AnyLetterObject>('S', Transform(2.25f, -1.3f, 0.0f), Material());
     letterSObj->SetObjectScale(glm::vec3(0.8f, 0.8f, 1.0f) * 0.75f);
 
     // Animação
+    auto cameraMovementComp = std::make_unique<SinWithOffsetXZTrnaslationComponent>(0.20f, 0.4f, 3.0f);
+    camera.AddComponent(std::move(cameraMovementComp));
+    camera.Start();
+    
     std::vector<std::unique_ptr<SinWithOffsetYTranslationComponent>> sinMovementComps;
     sinMovementComps.reserve(10);
     for (int i = 0; i < 10; ++i) {
@@ -149,6 +154,7 @@ bool RenderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
 
         // Tickar a Scene
         scene.TickAll(deltaTime);
+        camera.Tick(deltaTime);
         
         // Atualizar janela e Renderizar
         renderer.renderFrame(camera, scene, deltaTime);

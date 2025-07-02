@@ -7,7 +7,7 @@ void LetterCMesh::setupMesh(std::vector<float>& vertices, std::vector<unsigned i
     // Define o volume de amostragem
     const glm::vec3 minCorner(-0.7f, -0.7f, -0.3f);
     const glm::vec3 maxCorner( 0.7f,  0.7f,  0.3f);
-    constexpr int resolution =  150;  // aumenta para mais detalhe
+    constexpr int resolution =  196;  // aumenta para mais detalhe
     
     // Chama o marching cubes
     Polygonizer::PolygonizeSurface(
