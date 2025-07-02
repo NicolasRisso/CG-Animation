@@ -1,6 +1,10 @@
 # Projeto CGAnimator
 
-Este projeto implementa um sistema de animação 3D com OpenGL, permitindo a renderização de um cubo com textura metálica, iluminação dinâmica e exportação para vídeo.
+Este projeto implementa um sistema de animação 3D com OpenGL e C++, permitindo a renderização do texto "EACH 20 ANOS" animado.
+
+## Desenvolvido Por
+
+Nicolas Pereira Risso Vieira
 
 ## Estrutura do Projeto
 
@@ -17,8 +21,6 @@ CGAnimator/
 ├── shaders/              # Shaders GLSL
 ├── textures/             # Texturas e imagens
 ├── CMakeLists.txt        # Configuração do CMake
-├── Makefile              # Makefile para compilação direta
-├── GUIA_EXPANSAO.md      # Guia detalhado para expansão e customização
 └── config.h.in           # Template de configuração
 ```
 
@@ -32,7 +34,7 @@ cmake ..
 cmake --build . --config Release
 ```
 
-### Linux
+### Linux (NÃO TESTADO, O PROJETO FOI FEITO EM WINDOWS)
 ```bash
 mkdir build
 cd build
@@ -56,25 +58,16 @@ Uso: CGAnimator [opções]
 Opções:
   --width N     Largura da janela (padrão: 1280)
   --height N    Altura da janela (padrão: 720)
-  --frames N    Número total de frames (padrão: 180)
-  --output DIR  Diretório de saída (padrão: ./output)
-  --mode MODE   Modo de visualização (interactive/render, padrão: interactive)
   --help        Exibir esta ajuda
 ```
 
 ## Funcionalidades
 
-- Renderização de um cubo 3D com textura metálica
-- Iluminação dinâmica com luzes que mudam de cor
-- Rotação automática do cubo
-- Exportação de frames para imagens
-- Combinação de frames em vídeo
-- Modo interativo para visualização em tempo real
-- Modo de renderização para geração de vídeo
-
-## Customização
-
-Consulte o arquivo `GUIA_EXPANSAO.md` para instruções detalhadas sobre como expandir e customizar o projeto.
+- Renderização de modelos 3D
+- Iluminação dinâmica com luzes que mudam de cor e de posição
+- Operações Geométricas feitas por Composição (Adicione  componentes de animação á objetos de cena para animá-los)
+- Modelagem de formas por meio de Marching Cubes
+- Operação Boleana para Modelagem (Letras foram feitas assim)
 
 ## Requisitos
 
