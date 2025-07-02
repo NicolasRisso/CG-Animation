@@ -6,6 +6,11 @@ Este projeto implementa um sistema de animação 3D com OpenGL e C++, permitindo
 
 Nicolas Pereira Risso Vieira
 
+## Exemplo
+
+![Demonstração do recurso](./_example/videoexemplo.gif)
+
+
 ## Estrutura do Projeto
 
 O projeto está organizado da seguinte forma:
@@ -67,7 +72,7 @@ Opções:
 - Iluminação dinâmica com luzes que mudam de cor e de posição
 - Operações Geométricas feitas por Composição (Adicione  componentes de animação á objetos de cena para animá-los)
 - Modelagem de formas por meio de Marching Cubes
-- Operação Boleana e Campo de Distância Assinado (SDF) para Modelagem (Letras foram feitas assim)
+- Operação Boleana e Distãncia com Sinal (SDF) para Modelagem (Letras foram feitas assim)
 
 ## Requisitos
 
