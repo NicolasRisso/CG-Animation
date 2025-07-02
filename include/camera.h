@@ -12,11 +12,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Object/SceneObject.h"
+
 /**
  * @class Camera
  * @brief Classe para gerenciamento de câmera 3D
  */
-class Camera {
+class Camera : public SceneObject{
 public:
     /**
      * @brief Construtor da câmera
@@ -26,7 +28,6 @@ public:
      * @param pitch Ângulo de rotação vertical (em graus)
      */
     Camera(
-        glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f),
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
         float yaw = -90.0f,
         float pitch = 0.0f
@@ -47,18 +48,6 @@ public:
      * @return Matriz de projeção
      */
     glm::mat4 getProjectionMatrix(float aspectRatio, float fov = 45.0f, float nearPlane = 0.1f, float farPlane = 100.0f) const;
-    
-    /**
-     * @brief Atualiza a posição da câmera
-     * @param position Nova posição da câmera
-     */
-    void setPosition(const glm::vec3& position);
-    
-    /**
-     * @brief Obtém a posição atual da câmera
-     * @return Posição da câmera
-     */
-    glm::vec3 getPosition() const;
     
     /**
      * @brief Obtém o vetor de direção frontal da câmera
@@ -83,7 +72,7 @@ public:
      * @param yaw Ângulo de rotação horizontal (em graus)
      * @param pitch Ângulo de rotação vertical (em graus)
      */
-    void setRotation(float yaw, float pitch);
+    void SetCameraRotation(glm::vec3 rotation);
     
     /**
      * @brief Rotaciona a câmera
@@ -94,7 +83,6 @@ public:
     void rotate(float yawOffset, float pitchOffset, bool constrainPitch = true);
 
 private:
-    glm::vec3 m_position;    ///< Posição da câmera
     glm::vec3 m_front;       ///< Vetor de direção frontal
     glm::vec3 m_up;          ///< Vetor up
     glm::vec3 m_right;       ///< Vetor right

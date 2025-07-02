@@ -1,30 +1,26 @@
 #include "camera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
-    : m_position(position), m_worldUp(up), m_yaw(yaw), m_pitch(pitch)
+#include "Object/Meshes/Custom/InvisibleMesh.h"
+
+Camera::Camera(glm::vec3 up, float yaw, float pitch)
+    : m_worldUp(up), m_yaw(yaw), m_pitch(pitch), SceneObject(Transform(), [&]()
+    {
+        InvisibleMesh* mesh = new InvisibleMesh();
+        return mesh;
+    }(), Material())
 {
     updateCameraVectors();
 }
 
 glm::mat4 Camera::getViewMatrix() const
 {
-    return glm::lookAt(m_position, m_position + m_front, m_up);
+    return glm::lookAt(GetObjectPosition(), GetObjectPosition() + m_front, m_up);
 }
 
 glm::mat4 Camera::getProjectionMatrix(float aspectRatio, float fov, float nearPlane, float farPlane) const
 {
     return glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
-}
-
-void Camera::setPosition(const glm::vec3& position)
-{
-    m_position = position;
-}
-
-glm::vec3 Camera::getPosition() const
-{
-    return m_position;
 }
 
 glm::vec3 Camera::getFront() const
@@ -42,10 +38,11 @@ glm::vec3 Camera::getRight() const
     return m_right;
 }
 
-void Camera::setRotation(float yaw, float pitch)
+void Camera::SetCameraRotation(glm::vec3 rotation)
 {
-    m_yaw = yaw;
-    m_pitch = pitch;
+    m_yaw = rotation.x;
+    m_pitch = rotation.y;
+    SetObjectRotation(rotation);
     updateCameraVectors();
 }
 

@@ -6,7 +6,7 @@
 #include "Utility/Constants/EngineLimits.h"
 
 Mesh::Mesh()
-    : m_Material{Material()}, locModel(0), locView(0), locProjection(0), locViewPosition(0), locMaterialShininess(0) {}
+    : m_Material{Material()}, locModel(0), locView(0), locProjection(0), locViewPosition(0), locMaterialShininess(0), locMaterialDiffuse{0} {}
 
 Mesh::~Mesh()
 {

@@ -60,7 +60,7 @@ void Renderer::renderFrame(const Camera& camera, const Scene& scene, const float
 
     const std::vector<SceneObject*> sceneObjects = scene.GetObjectsFromScene();
     for (const SceneObject* object : sceneObjects)
-        object->Draw(camera.getViewMatrix(), camera.getProjectionMatrix(m_window.getAspectRatio()), camera.getPosition(), m_lights);
+        object->Draw(camera.getViewMatrix(), camera.getProjectionMatrix(m_window.getAspectRatio()), camera.GetObjectPosition(), m_lights);
     
     m_window.update();
 }
