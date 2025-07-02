@@ -25,18 +25,35 @@ void LetterSMesh::setupMesh(std::vector<float>& vertices, std::vector<unsigned i
 
 float LetterSMesh::LetterSWithSDF(const glm::vec3& p)
 {
-    // Parâmetros principais
-    const float R      = 0.5f;   // raio externo
-    const float r      = 0.25f;   // raio interno (espessura = R–r)
-    const float D      = 0.3f;   // profundidade em Z
-    const float shift = 0.8f;    // deslocamento vertical entre arcos
-    
-    // 1) Cria o “anel” (cilindro extrudado – cilindro interno)
-    // glm::vec3 p1 = p + glm::vec3(0.0f, 0.25f, 0.0f);
-    // float ringOuter = cappedCylinderSDF(p, R, D);
-    // float ringInner = cappedCylinderSDF(p, r, D);
-    // float capPlane1 = boxSDF(p1, glm::vec3(R, r, D));
-    // float ring      = opSubtract(opSubtract(ringOuter, capPlane1), ringInner);
+    const float H        = 1.2f;
+    const float halfH    = 0.2f;
+    // raio do seu cilindro (escolha o que precisar)
+    const float R        = 0.45f;
 
-    return 1.0f;//ring;
+    // pivôs em Z para bottom e top
+    glm::vec3 A_bot{ 0, 0, -halfH};  // base inferior em z = –0.6
+    glm::vec3 B_bot{ 0, 0, halfH };  // topo inferior em z =  0.0
+
+    glm::vec3 A_top{ 0, 0, -halfH };  // base superior em z =  0.0
+    glm::vec3 B_top{ 0, 0, halfH};  // topo   superior em z = +0.6
+
+    glm::vec3 offset{0, 0.345f, 0.0f};
+    glm::vec3 offsetBox{0.225f, 0.0f, 0.0f};
+    
+    // cilindro inferior (deitado, circular no plano XY, z ∈ [–0.6,0])
+    float cylBottom = cappedCylinderSDF(p + offset, A_bot, B_bot, R);
+    float minorCylBottom = cappedCylinderSDF(p + offset, A_bot, B_bot, R*0.5f);
+    float boxBottom = boxSDF(p + offsetBox, glm::vec3(0.225f, 0.225f, 0.3f));
+    float sBottom = opSubtract( opSubtract(cylBottom, minorCylBottom), boxBottom);
+
+    // cilindro superior (z ∈ [0,+0.6])
+    float cylTop    = cappedCylinderSDF(p - offset, A_top, B_top, R);
+    float minorCylTop = cappedCylinderSDF(p - offset, A_bot, B_bot, R*0.5f);
+    float boxTop = boxSDF(p - offsetBox, glm::vec3(0.225f, 0.225f, 0.3f));
+    float sTop = opSubtract( opSubtract(cylTop, minorCylTop), boxTop);
+
+    glm::vec3 connHalf{ 0.05f, R * 0.25f, halfH};
+    float connector = boxSDF(p, connHalf);
+
+    return opUnion(opUnion(sBottom, sTop), connector);
 }

@@ -53,13 +53,13 @@ bool renderAnimation(const std::string& outputDir, int totalFrames, ViewMode vie
     auto letterAObj = std::make_unique<AnyLetterObject>('A', Transform(0.0f, 0.0f, 0.0f), Material());
     auto letterCObj = std::make_unique<AnyLetterObject>('C', Transform(1.15f, 0.0f, 0.0f), Material());
     auto letterHObj = std::make_unique<AnyLetterObject>('H', Transform(2.1f, 0.0f, 0.0f), Material());
-
+    
     auto letterAObj2 = std::make_unique<AnyLetterObject>('A', Transform(-1.1f, -1.3f, 0.0f), Material());
     auto letterNObj = std::make_unique<AnyLetterObject>('N', Transform(0.0f, -1.3f, 0.0f), Material());
     auto letterOObj = std::make_unique<AnyLetterObject>('O', Transform(1.1f, -1.3f, 0.0f), Material());
+    letterOObj->SetObjectScale(glm::vec3(0.9f, 1.0f, 1.0f));
     auto letterSObj = std::make_unique<AnyLetterObject>('S', Transform(2.1f, -1.3f, 0.0f), Material());
-    //letterHObj->SetObjectScale(glm::vec3(1.0f, 1.25f, 1.0f));
-    // letterObj->AddComponent(std::make_unique<RotationComponent>(glm::vec3(0.f, 90.f, 0.f)));
+    letterSObj->SetObjectScale(glm::vec3(0.8f, 0.8f, 1.0f));
 
     Scene scene;
     scene.AddObjectToScene(std::move(letterEObj));
